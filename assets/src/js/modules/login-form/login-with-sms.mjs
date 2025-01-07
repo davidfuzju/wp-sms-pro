@@ -24,6 +24,7 @@ function init(initialData) {
     return initiationPromise
 }
 
+/// 登录页面，自动添加 sms login 按钮
 function addLoginWithSmsChoiceSection() {
     const section = jQuery(`
             <div class="or-login-with-wp-sms-otp-section">
@@ -50,6 +51,9 @@ function addLoginWithSmsChoiceSection() {
     }
 }
 
+/**
+ * SMS 登录的第二个页面，输入手机号 + 可能填写 Referral Code
+ */
 function addSecondLoginStep() {
     const secondSlide = jQuery(`
             <div class="login-form-step second-step">
@@ -58,8 +62,16 @@ function addSecondLoginStep() {
                 <div class="input-box">       
                     <label for="phoneNumber">${data.l10n.phone_number_field_label}</label>
                     ${data.elements.mobile_field}
-                </div>    
-                <button class="request-otp-button wpsms-button">
+                </div>
+
+                <!-- 这个就是“Referral Code”输入框，一开始隐藏 -->
+                <div id="referralCodeBox" class="input-box" style="display: none;">
+                    <label for="referralCode">Referral Code</label>
+                    <input type="text" id="referralCode" name="referralCode" />
+                </div>
+
+                <!-- 按钮，一开始禁用 -->
+                <button class="request-otp-button wpsms-button disabled" disabled>
                     <span class="spinner"></span>
                     <span>${data.l10n.request_otp_button_text}</span>
                 </button>
@@ -75,18 +87,26 @@ function addSecondLoginStep() {
             </div>
         `)
 
+    // 添加此界面
     utils.steps.addRightHandStep(secondSlide)
 
     let intlTelInputInstance
+    let capturedReferralCode = '' // 用户成功验证过的 referral code 暂存
+
     const loginWithEmailButton = secondSlide.children('.or-login-regularly')
     const requestCodeBtn = secondSlide.children('.request-otp-button')
+    const referralCodeBox = secondSlide.find('#referralCodeBox').hide()
+
+    // phoneNumber 输入框
     const phoneNumberField = jQuery('#phoneNumber').extend({
         getPhoneNumber() {
+            // 如果启用了 intlTelInput 插件，则优先用它来获取带区号的号码
             if (intlTelInputInstance == null && typeof window.intlTelInput != 'undefined') {
                 intlTelInputInstance = window.intlTelInput.getInstance(phoneNumberField.get(0))
             }
 
             if (intlTelInputInstance == null) {
+                // 没有初始化插件，则自己做简单的空格/破折号清理
                 return this.val().replace(/[-\s]/g, '')
             } else {
                 if (intlTelInputInstance.isValidNumber()) {
@@ -98,11 +118,55 @@ function addSecondLoginStep() {
         },
     })
 
+    // referralCode 输入框
+    const referralCodeField = jQuery('#referralCode').extend({
+        getReferralCode() {
+            return this.val().trim()
+        },
+    })
+
+    // ------------------------------------------------------------------------
+    // 统一的锁定/解锁字段函数
+    // ------------------------------------------------------------------------
+    function resetCapturedReferralCode() {
+        capturedReferralCode = ''
+        elems.capturedReferralCode = ''
+    }
+
+    function lockField($field, locked = true) {
+        $field.prop('readonly', locked)
+    }
+
+    // 启用/禁用 requestCodeBtn
+    function setRequestBtnEnabled(enabled) {
+        if (enabled) {
+            requestCodeBtn.removeClass('disabled').prop('disabled', false)
+        } else {
+            requestCodeBtn.addClass('disabled').prop('disabled', true)
+        }
+    }
+
+    function showReferralCodeBox() {
+        if (!referralCodeBox.is(':visible')) {
+            referralCodeBox.slideDown(200)
+        }
+    }
+
+    function hideReferralCodeBox() {
+        if (!referralCodeBox.is(':hidden')) {
+            referralCodeBox.slideUp(200)
+            referralCodeField.val('')
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    // 事件绑定
+    // ------------------------------------------------------------------------
+
+    // 点击 "登录邮箱" 按钮 => 回到第一步
     loginWithEmailButton.on('click', (e) => utils.steps.slideToStep(0))
 
-    phoneNumberField.on('keydown', (e) => {
-        e.key == 'Enter' && requestCodeBtn.trigger('click')
-    })
+    // 回到第二步时 => focus 到 phoneNumber
     elems.stepsContainer.on('slide', (e, index, promise) => {
         if (index == 1)
             promise.then(() => {
@@ -110,12 +174,139 @@ function addSecondLoginStep() {
             })
     })
 
+    // 用户回车 => 触发 requestCodeBtn
+    phoneNumberField.on('keydown', (e) => {
+        if (e.key === 'Enter') {
+            requestCodeBtn.trigger('click')
+        }
+    })
+
+    //////////////////////////////////////////////////////////////////////////
+    // 核心逻辑1：监听 phoneNumber 输入
+    //////////////////////////////////////////////////////////////////////////
+    phoneNumberField.on('keyup input', function () {
+        // 1) 本地校验
+        if (!verifyPhoneNumber()) {
+            // 只要输入框内值发生错误，就重置 referral code 暂存
+            resetCapturedReferralCode()
+            // 校验失败 => 隐藏 referralCodeBox, 按钮禁用
+            hideReferralCodeBox()
+            setBtnEnabled(false)
+            return
+        }
+
+        // 2) 校验成功 => 锁定 phoneNumber，显示按钮loading，发起 checkReferralCodeByPhone
+        lockField(phoneNumberField, true)
+
+        // 如果号码大致有效，则调用 Ajax
+        requestCodeBtn.addClass('loading')
+        checkReferralCodeByPhone(phoneNumberField.getPhoneNumber())
+            .done((res) => {
+                // 请求成功
+                if (res.success) {
+                    // 业务请求成功
+                    if (res.data.has_referral_code) {
+                        // 手机号有推荐码关联
+                        hideReferralCodeBox()
+                        setBtnEnabled(true)
+                    } else {
+                        // 手机号无推荐码关联
+                        showReferralCodeBox()
+                        setBtnEnabled(false)
+                    }
+                } else {
+                    // 业务请求失败
+                    utils.notices.removeAllNotices()
+                    utils.notices.addErrorNotice(res.data?.message || 'Check referral code failed.')
+                    hideReferralCodeBox()
+                    setBtnEnabled(false)
+                }
+            })
+            .fail(() => {
+                // 请求失败
+                utils.notices.removeAllNotices()
+                utils.notices.addErrorNotice(jqXhr.responseJSON?.message || 'Server error')
+                hideReferralCodeBox()
+                setBtnEnabled(false)
+            })
+            .always(() => {
+                // 不管成功/失败 => 解锁 phoneNumber，取消按钮loading
+                lockField(phoneNumberField, false)
+                setTimeout(() => requestCodeBtn.removeClass('loading'), 500)
+            })
+    })
+
+    //////////////////////////////////////////////////////////////////////////
+    // 核心逻辑2：如果需要 Referral Code，则用户手动输入
+    //////////////////////////////////////////////////////////////////////////
+    // 当用户填写完 referral code 并按下“提交”/“回车”等操作时，我们去校验
+    // 这里提供一个示例：用户敲回车即可校验，或你可以再加个小按钮
+    referralCodeField.on('keydown', (e) => {
+        e.key == 'Enter' && requestCodeBtn.trigger('click')
+    })
+
+    referralCodeField.on('keyup input', function () {
+        if (!verifyReferralCode()) return
+
+        lockField(phoneNumberField, true)
+        lockField(referralCodeField, true)
+        requestCodeBtn.addClass('loading')
+
+        validateReferralCode(phoneNumberField.getPhoneNumber(), referralCodeField.getReferralCode())
+            .done((res) => {
+                /// 请求成功
+                if (res.success) {
+                    /// 业务请求成功
+                    if (res.data.result) {
+                        // 验证推荐码通过
+                        capturedReferralCode = referralCodeField.getReferralCode()
+                        elems.capturedReferralCode = referralCodeField.getReferralCode()
+
+                        utils.notices.removeAllNotices()
+                        utils.notices.addSuccessNotice(res.data?.message || 'Referral code valid')
+                    } else {
+                        // 验证推荐码未通过
+                        resetCapturedReferralCode()
+
+                        utils.notices.removeAllNotices()
+                        utils.notices.addErrorNotice(res.data?.message || 'Invalid referral code')
+                    }
+                } else {
+                    // 业务请求失败
+                    resetCapturedReferralCode()
+
+                    utils.notices.removeAllNotices()
+                    utils.notices.addErrorNotice(res.data?.message || 'Invalid referral code')
+                }
+            })
+            .fail((jqXhr) => {
+                /// 请求失败
+                resetCapturedReferralCode()
+
+                utils.notices.removeAllNotices()
+                utils.notices.addErrorNotice(jqXhr.responseJSON?.message || 'Server error')
+            })
+            .always(() => {
+                setTimeout(() => {
+                    requestCodeBtn.removeClass('loading')
+                    lockField(referralCodeField, false)
+                    lockField(phoneNumberField, false)
+                }, 500)
+            })
+    })
+
+    //////////////////////////////////////////////////////////////////////////
+    // 核心逻辑3：点击 “requestCodeBtn”
+    //////////////////////////////////////////////////////////////////////////
     requestCodeBtn.on('click', (e) => {
-        if (requestCodeBtn.hasClass('loading')) return
+        if (requestCodeBtn.hasClass('loading') || requestCodeBtn.prop('disabled')) return
 
         if (!verifyPhoneNumber()) return
 
+        lockField(phoneNumberField, true)
+        lockField(referralCodeField, true)
         requestCodeBtn.addClass('loading')
+
         requestCode(phoneNumberField.getPhoneNumber())
             .done((data) => {
                 utils.notices.removeAllNotices()
@@ -131,7 +322,11 @@ function addSecondLoginStep() {
             })
             .always(() => {
                 if (typeof grecaptcha != 'undefined') grecaptcha.reset()
-                setTimeout(() => requestCodeBtn.removeClass('loading'), 500)
+                setTimeout(() => {
+                    requestCodeBtn.removeClass('loading')
+                    lockField(referralCodeField, false)
+                    lockField(phoneNumberField, false)
+                }, 500)
             })
     })
 
@@ -141,9 +336,11 @@ function addSecondLoginStep() {
         loginWithEmailButton,
         requestCodeBtn,
         phoneNumberField,
+        referralCodeField,
     }
 }
 
+/// sms 登录的第三个页面，输入 sms 验证码
 function addThirdLoginStep() {
     const thirdSlide = jQuery(`
             <div class="login-form-step third-step">
@@ -229,6 +426,9 @@ function addThirdLoginStep() {
     }
 }
 
+/**
+ * 验证手机号， 实际上可以看到并没有什么本地验证，只是查了一下是否为空而已
+ */
 function verifyPhoneNumber() {
     if (elems.phoneNumberField.getPhoneNumber() == '') {
         utils.notices.removeAllNotices()
@@ -241,6 +441,58 @@ function verifyPhoneNumber() {
     return true
 }
 
+/**
+ * 验证 referral code
+ */
+function verifyReferralCode() {
+    if (elems.referralCodeField.getReferralCode() !== 12) {
+        utils.notices.removeAllNotices()
+        utils.notices.addErrorNotice(data.l10n.invalid_referral_code)
+        utils.notices.shakeElement(elems.stepsContainer)
+        return true
+    }
+
+    return true
+}
+
+/**
+ * API 请求站点后端， 查询当前手机号和推荐码是否合法
+ * @param {*} phoneNumber
+ * @param {*} referralCode
+ * @returns
+ */
+function validateReferralCode(phoneNumber, referralCode) {
+    return jQuery.ajax({
+        method: 'POST',
+        url: ajaxUrl,
+        data: {
+            action: 'validate_referral_code',
+            phone_number: phoneNumber,
+            referral_code: referralCode,
+        },
+    })
+}
+
+/**
+ * API 请求站点后端，查询当前手机号对应的用户是否有 referral code
+ * @param {*} phoneNumber
+ */
+function checkReferralCodeByPhone(phoneNumber) {
+    return jQuery.ajax({
+        method: 'POST',
+        url: ajaxUrl,
+        data: {
+            action: 'check_referral_code_by_phone',
+            phone_number: phoneNumber,
+        },
+    })
+}
+
+/**
+ * API 请求 SMS 验证码
+ * @param {*} phoneNumber 手机号
+ * @returns
+ */
 function requestCode(phoneNumber) {
     const endPoint = data.endPoints.request_otp
     const requestData = {
@@ -261,7 +513,14 @@ function requestCode(phoneNumber) {
     })
 }
 
-function verifyCode(phoneNumber, code) {
+/**
+ * API 验证 SMS 验证码
+ * @param {*} phoneNumber 手机号
+ * @param {*} code 验证码
+ * @param {*} referralCode 推荐码
+ * @returns
+ */
+function verifyCode(phoneNumber, code, referralCode) {
     const endPoint = data.endPoints.login_with_otp
     return jQuery.ajax({
         method: endPoint.method,
@@ -269,6 +528,7 @@ function verifyCode(phoneNumber, code) {
         data: {
             phone_number: phoneNumber,
             code: code,
+            referral_code: referralCode,
             is_new: isNewUser,
         },
         headers: {

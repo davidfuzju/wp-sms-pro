@@ -16,6 +16,10 @@ use WP_REST_Request;
 use WP_SMS\Components\NumberParser;
 use WP_SMS\User\RegisterUserViaPhone;
 use WP_SMS\User\UserLoginHandler;
+
+/**
+ * 验证码登录相关逻辑类
+ */
 class LoginWithSmsOtp
 {
     /**
@@ -90,6 +94,8 @@ class LoginWithSmsOtp
         WPSmsPro()->enqueueScript('assets/dist/js/login-form/main.js', ['jquery']);
         $scriptHandle = WPSmsPro()->enqueueScript('assets/dist/js/login.js', ['jquery']);
         wp_localize_script($scriptHandle, 'WPSmsProLoginWithSmsData', ["l10n" => ['login_with_sms_title' => __('Login with SMS', 'wp-sms-pro'), 'login_with_sms_code_subtitle' => __('Please Enter Your Verification Code', 'wp-sms-pro'), 'login_with_sms_code_label' => __('Verification Code', 'wp-sms-pro'), 'login_with_sms_number_subtitle' => __('Please Enter Your Phone Number', 'wp-sms-pro'), 'or' => __('OR', 'wp-sms-pro'), 'login_button_text' => __('Login with SMS', 'wp-sms-pro'), 'login_with_email_text' => __('Login with Username/Email address', 'wp-sms-pro'), 'phone_number_field_label' => __('Phone Number', 'wp-sms-pro'), 'request_otp_button_text' => __('Continue', 'wp-sms-pro'), 'verify_button_text' => __('Verify', 'wp-sms-pro'), 'request_new_code_text' => __('Didn\'t Receive The Code?', 'wp-sms-pro'), 'request_new_code_link' => __('Request New Code', 'wp-sms-pro'), 'please_fill_digits_notice' => __('Please fill all the digit inputs', 'wp-sms-pro'), 'invalid_phone_number' => __('Invalid phone number!', 'wp-sms-pro')], "options" => ['intl_input_is_active' => WPSmsOptionsManager::getOption('international_mobile'), 'is_rtl_page' => is_rtl()], "elements" => ['mobile_field' => $this->renderMobileInputField()], "recaptcha" => ['site_key' => isset($this->recaptcha) ? $this->recaptcha->getSiteKey() : null], "endPoints" => $this->endPoints]);
+        /// 加入 admin-ajax 的 url
+        wp_localize_script($scriptHandle, 'ajaxurl', admin_url('admin-ajax.php'));
     }
     /**
      * Render mobile input field
@@ -109,7 +115,10 @@ class LoginWithSmsOtp
      */
     private function registerEndpoints()
     {
-        $this->endPoints = ['request_otp' => Route::post('login_form/request_otp', [$this, 'requestOtp']), 'login_with_otp' => Route::post('login_form/login_with_otp', [$this, 'loginByOtp'])];
+        $this->endPoints = [
+            'request_otp' => Route::post('login_form/request_otp', [$this, 'requestOtp']),
+            'login_with_otp' => Route::post('login_form/login_with_otp', [$this, 'loginByOtp'])
+        ];
     }
     /**
      * Request a new otp endpoint
@@ -163,6 +172,7 @@ class LoginWithSmsOtp
         try {
             $inputPhoneNumber = (string) sanitize_text_field($request->get_param('phone_number'));
             $inputCode = (string) $request->get_param('code');
+            $referralCode = (string) $request->get_param('referral_code');
             $isNewUser = \filter_var($request->get_param('is_new'), \FILTER_VALIDATE_BOOLEAN);
             if (\class_exists(NumberParser::class)) {
                 $numberParser = new NumberParser($inputPhoneNumber);
@@ -190,6 +200,11 @@ class LoginWithSmsOtp
                     throw new SendRestResponse(['message' => __('No user is registered with the given phone number.', 'wp-sms-pro')], 400);
                 }
             }
+
+            if (function_exists('nv_referral_code_handle_new_registration')) {
+                nv_referral_code_handle_new_registration($user->ID, $referralCode);
+            }
+
             if (\class_exists(UserLoginHandler::class)) {
                 $userLoginHandler = new UserLoginHandler($user);
                 $userLoginHandler->login();

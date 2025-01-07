@@ -1,5 +1,5 @@
-import * as utils from "./login-form-utils.mjs"
-import otpInput from "../otp/otp-input.mjs"
+import * as utils from './login-form-utils.mjs'
+import otpInput from '../otp/otp-input.mjs'
 
 export default {init, initRecaptcha}
 
@@ -7,19 +7,20 @@ var elems
 var data
 var initiationPromise
 
-var isNewUser = false;
+var isNewUser = false
 
 function init(initialData) {
-    if (typeof initiationPromise == 'undefined') initiationPromise = new Promise((resolve) => {
-        elems = {...utils.elements}
-        data = initialData
+    if (typeof initiationPromise == 'undefined')
+        initiationPromise = new Promise((resolve) => {
+            elems = {...utils.elements}
+            data = initialData
 
-        addLoginWithSmsChoiceSection()
-        addSecondLoginStep()
-        addThirdLoginStep()
+            addLoginWithSmsChoiceSection()
+            addSecondLoginStep()
+            addThirdLoginStep()
 
-        resolve()
-    })
+            resolve()
+        })
     return initiationPromise
 }
 
@@ -45,7 +46,7 @@ function addLoginWithSmsChoiceSection() {
 
     elems = {
         ...elems,
-        loginWithSmsButton
+        loginWithSmsButton,
     }
 }
 
@@ -76,61 +77,62 @@ function addSecondLoginStep() {
 
     utils.steps.addRightHandStep(secondSlide)
 
-    let intlTelInputInstance;
-    const loginWithEmailButton = secondSlide.children(".or-login-regularly")
+    let intlTelInputInstance
+    const loginWithEmailButton = secondSlide.children('.or-login-regularly')
     const requestCodeBtn = secondSlide.children('.request-otp-button')
     const phoneNumberField = jQuery('#phoneNumber').extend({
         getPhoneNumber() {
             if (intlTelInputInstance == null && typeof window.intlTelInput != 'undefined') {
-                intlTelInputInstance = window.intlTelInput.getInstance(phoneNumberField.get(0));
+                intlTelInputInstance = window.intlTelInput.getInstance(phoneNumberField.get(0))
             }
 
             if (intlTelInputInstance == null) {
-                return this.val().replace(/[-\s]/g, '');
+                return this.val().replace(/[-\s]/g, '')
             } else {
                 if (intlTelInputInstance.isValidNumber()) {
-                    return intlTelInputInstance.getNumber();
+                    return intlTelInputInstance.getNumber()
                 } else {
-                    return '';
+                    return ''
                 }
             }
-        }
+        },
     })
 
-    loginWithEmailButton.on('click', e => utils.steps.slideToStep(0))
+    loginWithEmailButton.on('click', (e) => utils.steps.slideToStep(0))
 
-    phoneNumberField.on('keydown', e => {
+    phoneNumberField.on('keydown', (e) => {
         e.key == 'Enter' && requestCodeBtn.trigger('click')
     })
     elems.stepsContainer.on('slide', (e, index, promise) => {
-        if (index == 1) promise.then(() => {
-            phoneNumberField.trigger('focus')
-        })
+        if (index == 1)
+            promise.then(() => {
+                phoneNumberField.trigger('focus')
+            })
     })
 
-    requestCodeBtn.on('click', e => {
+    requestCodeBtn.on('click', (e) => {
         if (requestCodeBtn.hasClass('loading')) return
 
-        if (!verifyPhoneNumber()) return;
+        if (!verifyPhoneNumber()) return
 
         requestCodeBtn.addClass('loading')
         requestCode(phoneNumberField.getPhoneNumber())
-                .done(data => {
-                    utils.notices.removeAllNotices()
-                    utils.notices.addSuccessNotice(data.message)
-                    utils.steps.slideToStep(2)
+            .done((data) => {
+                utils.notices.removeAllNotices()
+                utils.notices.addSuccessNotice(data.message)
+                utils.steps.slideToStep(2)
 
-                    isNewUser = (data.is_new !== undefined && data.is_new);
-                })
-                .fail(jqXhr => {
-                    utils.notices.removeAllNotices()
-                    utils.notices.addErrorNotice(jqXhr.responseJSON.message)
-                    utils.notices.shakeElement(elems.stepsContainer)
-                })
-                .always(() => {
-                    if (typeof grecaptcha != 'undefined') grecaptcha.reset()
-                    setTimeout(() => requestCodeBtn.removeClass('loading'), 500)
-                })
+                isNewUser = data.is_new !== undefined && data.is_new
+            })
+            .fail((jqXhr) => {
+                utils.notices.removeAllNotices()
+                utils.notices.addErrorNotice(jqXhr.responseJSON.message)
+                utils.notices.shakeElement(elems.stepsContainer)
+            })
+            .always(() => {
+                if (typeof grecaptcha != 'undefined') grecaptcha.reset()
+                setTimeout(() => requestCodeBtn.removeClass('loading'), 500)
+            })
     })
 
     elems = {
@@ -138,7 +140,7 @@ function addSecondLoginStep() {
         secondSlide,
         loginWithEmailButton,
         requestCodeBtn,
-        phoneNumberField
+        phoneNumberField,
     }
 }
 
@@ -172,45 +174,44 @@ function addThirdLoginStep() {
     const requestNewCodeBtn = thirdSlide.children('.request-new-code')
 
     elems.stepsContainer.on('slide', (e, index, promise) => {
-        if (index == 2) promise.then(() => {
-            elems.otpContainer.focusInput()
-        })
+        if (index == 2)
+            promise.then(() => {
+                elems.otpContainer.focusInput()
+            })
     })
     otpContainer.addEventListener('submit', () => verificationBtn.trigger('click'))
-    otpContainer.addEventListener('invalidInput', e => {
+    otpContainer.addEventListener('invalidInput', (e) => {
         utils.notices.removeAllNotices()
         utils.notices.addErrorNotice(data.l10n.please_fill_digits_notice)
         setTimeout(() => verificationBtn.removeClass('loading'), 500)
     })
 
-    verificationBtn.on('click', e => {
+    verificationBtn.on('click', (e) => {
         const code = elems.otpContainer.getCode()
         if (code == false) return
 
         if (verificationBtn.hasClass('loading')) return
 
-        if (!verifyPhoneNumber()) return;
+        if (!verifyPhoneNumber()) return
 
         verificationBtn.addClass('loading')
 
         verifyCode(elems.phoneNumberField.getPhoneNumber(), code)
-                .done((data) => {
-                    utils.notices.removeAllNotices()
-                    utils.notices.addSuccessNotice(data.message)
-                    setTimeout(() => {
-                        window.location.replace(data.redirect_to)
-                    }, 500)
-                })
-                .fail((jqXhr) => {
-                    utils.notices.removeAllNotices()
-                    utils.notices.addErrorNotice(jqXhr.responseJSON.message)
-                    utils.notices.shakeElement(elems.stepsContainer)
-                    elems.otpContainer.addErrorClassToInput()
-                    elems.otpContainer.focusInput()
-                })
-                .always(
-                        setTimeout(() => verificationBtn.removeClass('loading'), 500)
-                )
+            .done((data) => {
+                utils.notices.removeAllNotices()
+                utils.notices.addSuccessNotice(data.message)
+                setTimeout(() => {
+                    window.location.replace(data.redirect_to)
+                }, 500)
+            })
+            .fail((jqXhr) => {
+                utils.notices.removeAllNotices()
+                utils.notices.addErrorNotice(jqXhr.responseJSON.message)
+                utils.notices.shakeElement(elems.stepsContainer)
+                elems.otpContainer.addErrorClassToInput()
+                elems.otpContainer.focusInput()
+            })
+            .always(setTimeout(() => verificationBtn.removeClass('loading'), 500))
     })
 
     requestNewCodeBtn.on('click', () => {
@@ -218,7 +219,6 @@ function addThirdLoginStep() {
             elems.otpContainer.clean()
         })
     })
-
 
     elems = {
         ...elems,
@@ -231,20 +231,20 @@ function addThirdLoginStep() {
 
 function verifyPhoneNumber() {
     if (elems.phoneNumberField.getPhoneNumber() == '') {
-        utils.notices.removeAllNotices();
-        utils.notices.addErrorNotice(data.l10n.invalid_phone_number);
-        utils.notices.shakeElement(elems.stepsContainer);
+        utils.notices.removeAllNotices()
+        utils.notices.addErrorNotice(data.l10n.invalid_phone_number)
+        utils.notices.shakeElement(elems.stepsContainer)
 
-        return false;
+        return false
     }
 
-    return true;
+    return true
 }
 
 function requestCode(phoneNumber) {
     const endPoint = data.endPoints.request_otp
     const requestData = {
-        "phone_number": phoneNumber
+        phone_number: phoneNumber,
     }
 
     if (data.recaptcha.site_key && window.grecaptcha) {
@@ -252,33 +252,32 @@ function requestCode(phoneNumber) {
     }
 
     return jQuery.ajax({
-        "method": endPoint.method,
-        "url": endPoint.url,
-        "data": requestData,
-        "headers": {
-            [endPoint.nonce_header_key]: endPoint.nonce
-        }
+        method: endPoint.method,
+        url: endPoint.url,
+        data: requestData,
+        headers: {
+            [endPoint.nonce_header_key]: endPoint.nonce,
+        },
     })
 }
 
 function verifyCode(phoneNumber, code) {
     const endPoint = data.endPoints.login_with_otp
     return jQuery.ajax({
-        "method": endPoint.method,
-        "url": endPoint.url,
-        "data": {
-            "phone_number": phoneNumber,
-            "code": code,
-            "is_new": isNewUser,
+        method: endPoint.method,
+        url: endPoint.url,
+        data: {
+            phone_number: phoneNumber,
+            code: code,
+            is_new: isNewUser,
         },
-        "headers": {
-            [endPoint.nonce_header_key]: endPoint.nonce
-        }
+        headers: {
+            [endPoint.nonce_header_key]: endPoint.nonce,
+        },
     })
 }
 
 function initRecaptcha() {
     const recaptcha = jQuery(`<div class="wp-sms-login-form-recaptcha"></div>`).insertBefore(elems.requestCodeBtn)
-    data.recaptchaId = grecaptcha.render(recaptcha.get(0), {'sitekey': data.recaptcha.site_key})
+    data.recaptchaId = grecaptcha.render(recaptcha.get(0), {sitekey: data.recaptcha.site_key})
 }
-

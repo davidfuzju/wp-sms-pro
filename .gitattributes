@@ -3,7 +3,6 @@
 /.wordpress-org export-ignore
 /bin export-ignore
 /tests export-ignore
-/vendor/ export-ignore
 /node_modules export-ignore
 
 /.babelrc export-ignore

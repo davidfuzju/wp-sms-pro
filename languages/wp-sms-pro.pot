@@ -1,0 +1,563 @@
+# Copyright (C) 2024 VeronaLabs
+# This file is distributed under the same license as the WP SMS Pro Pack plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: WP SMS Pro Pack 4.3.6\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-sms-pro\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-12-23T09:35:39+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: wp-sms-pro\n"
+
+#. Plugin Name of the plugin
+#: wp-sms-pro.php
+msgid "WP SMS Pro Pack"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: wp-sms-pro.php
+msgid "https://wp-sms-pro.com/"
+msgstr ""
+
+#. Description of the plugin
+#: wp-sms-pro.php
+msgid "The professional pack adds many features, supports the most popular SMS gateways, and also integrates with other plugins."
+msgstr ""
+
+#. Author of the plugin
+#: wp-sms-pro.php
+msgid "VeronaLabs"
+msgstr ""
+
+#. Author URI of the plugin
+#: wp-sms-pro.php
+msgid "https://veronalabs.com/"
+msgstr ""
+
+#: includes/admin/class-wpsms-pro-admin.php:43
+#: includes/templates/admin/scheduled.php:8
+msgid "Scheduled"
+msgstr ""
+
+#: includes/admin/class-wpsms-pro-admin.php:121
+msgid "Please Install/Active or Update <a href=\"%s\" class=\"thickbox\">WP SMS</a> to run the WP SMS Pro plugin."
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:51
+msgid "%s <span class=\"wpsms-time\">Time: %s</span>"
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:60
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:65
+#: src/Services/RepeatingMessages/RepeatingListTable.php:45
+#: src/Services/RepeatingMessages/RepeatingListTable.php:50
+msgid "Click to View more..."
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:81
+msgid "On Queue"
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:84
+msgid "Executed"
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:87
+msgid "Unknown"
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:110
+#: src/Services/RepeatingMessages/RepeatingListTable.php:91
+msgid "Edit"
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:112
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:169
+#: src/Services/RepeatingMessages/RepeatingListTable.php:93
+#: src/Services/RepeatingMessages/RepeatingListTable.php:167
+msgid "Delete"
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:141
+msgid "Date"
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:142
+#: src/Services/RepeatingMessages/RepeatingListTable.php:138
+msgid "Sender"
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:143
+#: src/Services/RepeatingMessages/RepeatingListTable.php:139
+msgid "Message"
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:144
+#: src/Services/RepeatingMessages/RepeatingListTable.php:140
+msgid "Recipient"
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:145
+#: src/Services/RepeatingMessages/RepeatingListTable.php:141
+msgid "Media"
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:146
+msgid "Status"
+msgstr ""
+
+#: includes/admin/scheduled/class-wpsms-scheduled-list-table.php:215
+msgid "The SMS sent successfully."
+msgstr ""
+
+#: includes/class-wpsms-scheduled.php:139
+msgid "WP SMS Pro Scheduled SMS cron"
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-alfacell.php:124
+#: includes/gateways/class-wpsms-pro-gateway-bandwidth.php:129
+#: includes/gateways/class-wpsms-pro-gateway-bulksms.php:142
+#: includes/gateways/class-wpsms-pro-gateway-bulksmshyderabad.php:113
+#: includes/gateways/class-wpsms-pro-gateway-clicksend.php:109
+#: includes/gateways/class-wpsms-pro-gateway-clockworksms.php:107
+#: includes/gateways/class-wpsms-pro-gateway-cmtelecom.php:97
+#: includes/gateways/class-wpsms-pro-gateway-dsms.php:94
+#: includes/gateways/class-wpsms-pro-gateway-esms.php:117
+#: includes/gateways/class-wpsms-pro-gateway-infobip.php:122
+#: includes/gateways/class-wpsms-pro-gateway-isms.php:95
+#: includes/gateways/class-wpsms-pro-gateway-jolis.php:93
+#: includes/gateways/class-wpsms-pro-gateway-linkmobility.php:129
+#: includes/gateways/class-wpsms-pro-gateway-livesms.php:92
+#: includes/gateways/class-wpsms-pro-gateway-makolar.php:118
+#: includes/gateways/class-wpsms-pro-gateway-messente.php:118
+#: includes/gateways/class-wpsms-pro-gateway-mitake.php:135
+#: includes/gateways/class-wpsms-pro-gateway-mobishastra.php:134
+#: includes/gateways/class-wpsms-pro-gateway-moceansms.php:125
+#: includes/gateways/class-wpsms-pro-gateway-msg360.php:93
+#: includes/gateways/class-wpsms-pro-gateway-nexmo.php:125
+#: includes/gateways/class-wpsms-pro-gateway-ozioma.php:96
+#: includes/gateways/class-wpsms-pro-gateway-plivo.php:129
+#: includes/gateways/class-wpsms-pro-gateway-proovl.php:130
+#: includes/gateways/class-wpsms-pro-gateway-pswin.php:130
+#: includes/gateways/class-wpsms-pro-gateway-ra.php:93
+#: includes/gateways/class-wpsms-pro-gateway-sendpulse.php:118
+#: includes/gateways/class-wpsms-pro-gateway-sendsms247.php:92
+#: includes/gateways/class-wpsms-pro-gateway-smsapicom.php:114
+#: includes/gateways/class-wpsms-pro-gateway-smseagle.php:152
+#: includes/gateways/class-wpsms-pro-gateway-smsfactor.php:127
+#: includes/gateways/class-wpsms-pro-gateway-smslive247.php:102
+#: includes/gateways/class-wpsms-pro-gateway-smsmessenger.php:134
+#: includes/gateways/class-wpsms-pro-gateway-smstrade.php:92
+#: includes/gateways/class-wpsms-pro-gateway-ssdindia.php:120
+#: includes/gateways/class-wpsms-pro-gateway-textmarketer.php:123
+#: includes/gateways/class-wpsms-pro-gateway-twilio.php:183
+#: includes/gateways/class-wpsms-pro-gateway-vsms.php:113
+#: includes/gateways/class-wpsms-pro-gateway-yamamah.php:84
+msgid "The username/password for this gateway is not set"
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-apifon.php:96
+#: includes/gateways/class-wpsms-pro-gateway-releans.php:87
+#: includes/gateways/class-wpsms-pro-gateway-smsbuddy.php:95
+#: includes/gateways/class-wpsms-pro-gateway-smsnoc.php:105
+#: includes/gateways/class-wpsms-pro-gateway-smsnoc.php:146
+msgid "Something went wrong"
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-apifon.php:124
+#: includes/gateways/class-wpsms-pro-gateway-bulksmsMa.php:114
+#: includes/gateways/class-wpsms-pro-gateway-releans.php:115
+#: includes/gateways/class-wpsms-pro-gateway-smsbuddy.php:123
+msgid "The API Key is required."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-bandwidth.php:134
+#: includes/gateways/class-wpsms-pro-gateway-btssms.php:133
+#: includes/gateways/class-wpsms-pro-gateway-bulksmsbd.php:136
+#: includes/gateways/class-wpsms-pro-gateway-bulksmsnigeria.php:165
+#: includes/gateways/class-wpsms-pro-gateway-gtxmessaging.php:119
+#: includes/gateways/class-wpsms-pro-gateway-jusibe.php:112
+#: includes/gateways/class-wpsms-pro-gateway-kaleyra.php:126
+#: includes/gateways/class-wpsms-pro-gateway-kwtsms.php:116
+#: includes/gateways/class-wpsms-pro-gateway-linkmobilityFr.php:130
+#: includes/gateways/class-wpsms-pro-gateway-messagebird.php:108
+#: includes/gateways/class-wpsms-pro-gateway-nobelsms.php:148
+#: includes/gateways/class-wpsms-pro-gateway-orange.php:151
+#: includes/gateways/class-wpsms-pro-gateway-routesms.php:127
+#: includes/gateways/class-wpsms-pro-gateway-semaphore.php:82
+#: includes/gateways/class-wpsms-pro-gateway-semaphore.php:132
+#: includes/gateways/class-wpsms-pro-gateway-smsbharti.php:123
+#: includes/gateways/class-wpsms-pro-gateway-smsgateway.php:125
+#: includes/gateways/class-wpsms-pro-gateway-smsmasivos.php:144
+#: includes/gateways/class-wpsms-pro-gateway-springedge.php:116
+#: includes/gateways/class-wpsms-pro-gateway-taqnyat.php:122
+#: includes/gateways/class-wpsms-pro-gateway-textlocal.php:92
+#: includes/gateways/class-wpsms-pro-gateway-turbosms.php:145
+#: includes/gateways/class-wpsms-pro-gateway-txtlocal.php:116
+msgid "The API Key for this gateway is not set"
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-clicksend.php:117
+msgid "Please enable WP SMS Pro plugin."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-eskiz.php:100
+msgid "The username or password is not set."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-esmsbd.php:23
+msgid "e.g. 880xxxxxxxxxx"
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-esmsbd.php:116
+#: includes/gateways/class-wpsms-pro-gateway-htd.php:113
+msgid "The API Key for this gateway is not set."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-every8d.php:127
+msgid "The username, password and site URL are required."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-firetext.php:137
+msgid "The username/password/apiKey for this gateway is not set."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-greenweb.php:104
+msgid "The Gateway Token is not set."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-hubtel.php:132
+msgid "ClientID and Client Secret are required."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-messagemedia.php:126
+msgid "The API Key/API Secret for this gateway is not set."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-micron.php:113
+msgid "Username or password for this gateway are not set"
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-mimsms.php:110
+msgid "The Username, Password, or API Key for this gateway is not set"
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-montymobile.php:116
+msgid "%s, sent successfully."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-montymobile.php:127
+msgid "%s, failed."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-nhncloud.php:131
+msgid "The username and password are required."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-nusasms.php:95
+msgid "Username/password for this gateway are required."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-ovh.php:237
+msgid "Username/Password or API Key does not set for this gateway"
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-rapidsms.php:91
+msgid "Username/Password are require."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-sendinblue.php:100
+msgid "Api key is require!"
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-smsdone.php:134
+msgid "The API Key and Secret Key are required."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-smsdone.php:154
+msgid "Username is required."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-smspoh.php:113
+msgid "The authorization key for this gateway is not set."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-smsviro.php:95
+msgid "Api key is require."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-textteam.php:130
+msgid "The username/password for this gateway is not set."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-tyntec.php:124
+msgid "API Key required for this gateway"
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-websms.php:138
+msgid "The API key is required."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-whatsappapi.php:90
+msgid "JWT is require."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-whatsappcloud.php:100
+msgid "Please provide the name of the message template."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-whatsappcloud.php:107
+msgid "The file you have uploaded is not compatible/supported."
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-whatsappcloud.php:172
+msgid "User Access Token and WhatsApp Business Account ID are required."
+msgstr ""
+
+#: includes/integrations/class-wpsms-pro-easy-digital-downloads.php:46
+#: includes/integrations/class-wpsms-pro-easy-digital-downloads.php:48
+#: includes/integrations/class-wpsms-pro-easy-digital-downloads.php:75
+msgid "Mobile Number"
+msgstr ""
+
+#: includes/integrations/class-wpsms-pro-easy-digital-downloads.php:47
+#: includes/integrations/class-wpsms-pro-easy-digital-downloads.php:58
+msgid "Please enter mobile number for get sms"
+msgstr ""
+
+#: includes/integrations/class-wpsms-pro-wp-job-manager.php:59
+#: includes/integrations/class-wpsms-pro-wp-job-manager.php:85
+msgid "e.g. %s"
+msgstr ""
+
+#: includes/integrations/class-wpsms-pro-wp-job-manager.php:63
+#: includes/integrations/class-wpsms-pro-wp-job-manager.php:89
+msgid "Mobile number"
+msgstr ""
+
+#: includes/integrations/class-wpsms-pro-wp-job-manager.php:107
+msgid "<li>Mobile: %s</li>"
+msgstr ""
+
+#: includes/templates/admin/otp-optional-field.php:2
+msgid "Active"
+msgstr ""
+
+#: includes/templates/admin/scheduled.php:13
+msgid "Scheduled SMS"
+msgstr ""
+
+#: includes/templates/admin/scheduled.php:18
+msgid "Repeating SMS"
+msgstr ""
+
+#: includes/templates/admin/scheduled.php:36
+msgid "Search"
+msgstr ""
+
+#: includes/templates/verify-sms-field-login.php:2
+msgid "Verify code"
+msgstr ""
+
+#: includes/templates/verify-sms-field.php:1
+msgid "Mobile status"
+msgstr ""
+
+#: includes/templates/verify-sms-field.php:5
+msgid "Verified"
+msgstr ""
+
+#: includes/templates/verify-sms-field.php:10
+msgid "Yes"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:105
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:110
+msgid "Login with SMS"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:106
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:101
+msgid "Please Enter Your Verification Code"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:107
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:102
+msgid "Verification Code"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:108
+msgid "Please Enter Your Phone Number"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:109
+msgid "OR"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:111
+msgid "Login with Username/Email address"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:112
+msgid "Phone Number"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:113
+msgid "Continue"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:114
+msgid "Verify"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:115
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:105
+msgid "Didn't Receive The Code?"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:116
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:106
+msgid "Request New Code"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:117
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:104
+msgid "Please fill all the digit inputs"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:118
+msgid "Invalid phone number!"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:191
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:270
+msgid "No user is registered with the given phone number."
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:207
+msgid "Passcode is successfully sent to your number."
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:212
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:310
+msgid "Please enter a valid phone number."
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:246
+msgid "Wrong passcode."
+msgstr ""
+
+#: src/Services/Admin/LoginForm/LoginWithSmsOtp.php:305
+msgid "You have been successfully logged in"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:100
+msgid "Two Factor Authentication"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:103
+msgid "Submit"
+msgstr ""
+
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:141
+msgid "Recaptcha failed."
+msgstr ""
+
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:158
+msgid "User does not need two-factor authentication."
+msgstr ""
+
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:174
+msgid "Passcode is successfully generated."
+msgstr ""
+
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:178
+msgid "User's phone number is not valid."
+msgstr ""
+
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:252
+#: src/Services/Admin/LoginForm/TwoFactorAuthentication.php:256
+msgid "<strong>Error</strong>: Invalid code, 2FA failed."
+msgstr ""
+
+#: src/Services/Controller/SendSmsBlockAjaxController.php:44
+msgid "The text you have entered exceeds the maximum character count."
+msgstr ""
+
+#: src/Services/Controller/SendSmsBlockAjaxController.php:56
+msgid "Parameter group_ids is required"
+msgstr ""
+
+#: src/Services/Controller/SendSmsBlockAjaxController.php:64
+msgid "Parameter numbers is required"
+msgstr ""
+
+#: src/Services/Controller/SendSmsBlockAjaxController.php:73
+msgid "Admin mobile number not found"
+msgstr ""
+
+#: src/Services/Controller/SendSmsBlockAjaxController.php:94
+msgid "Successfully send SMS!"
+msgstr ""
+
+#: src/Services/DynamicResponse/Response.php:65
+msgid "Provided number is not a valid phone number."
+msgstr ""
+
+#: src/Services/Integration/AwesomeSupport/AwesomeSupport.php:72
+#: src/Services/Integration/AwesomeSupport/AwesomeSupport.php:73
+msgid "Mobile"
+msgstr ""
+
+#: src/Services/Integration/BuddyPress/BuddyPress.php:74
+msgid "Insert a mobile number field into profiles"
+msgstr ""
+
+#: src/Services/Integration/BuddyPress/BuddyPress.php:75
+msgid "Use the existing profile phone field"
+msgstr ""
+
+#: src/Services/Integration/BuddyPress/BuddyPressNewMobileFieldHandler.php:72
+msgid "Your mobile number to receive SMS updates"
+msgstr ""
+
+#: src/Services/RepeatingMessages/RepeatingListTable.php:69
+msgid "Ongoing"
+msgstr ""
+
+#: src/Services/RepeatingMessages/RepeatingListTable.php:73
+msgid "Finished"
+msgstr ""
+
+#: src/Services/RepeatingMessages/RepeatingListTable.php:123
+msgid "Every %u %s"
+msgstr ""
+
+#: src/Services/RepeatingMessages/RepeatingListTable.php:137
+msgid "Start at"
+msgstr ""
+
+#: src/Services/RepeatingMessages/RepeatingListTable.php:142
+msgid "Repeat"
+msgstr ""
+
+#: src/Services/RepeatingMessages/RepeatingListTable.php:143
+msgid "End at"
+msgstr ""
+
+#: src/Services/RepeatingMessages/RepeatingListTable.php:196
+msgid "Items removed."
+msgstr ""
+
+#: src/Services/RepeatingMessages/RepeatingListTable.php:209
+msgid "Item removed."
+msgstr ""
+
+#: src/Services/RepeatingMessages/RepeatingMessages.php:68
+msgid "WPSMS repeating message number %u"
+msgstr ""

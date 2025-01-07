@@ -1,0 +1,46 @@
+{
+    "name": "veronalabs\/wp-sms-pro",
+    "description": "Complementary package to enable premium capabilities and SMS gateways for WP-SMS!",
+    "type": "wordpress-plugin",
+    "authors": [
+        {
+            "name": "VeronaLabs"
+        }
+    ],
+    "require": {
+        "php": ">=5.7",
+        "twilio\/sdk": "^6.34",
+        "clicksend\/clicksend-php": "^4.0.3",
+        "messagebird\/php-rest-api": "^1.9",
+        "veronalabs\/updater": "^2.0",
+        "league\/container": "^2.5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "WP_SMS\\Pro\\": "src\/"
+        },
+        "files": [
+            "src\/globals.php"
+        ]
+    },
+    "config": {
+        "platform": {
+            "php": "5.7"
+        }
+    },
+    "scripts": {
+        "build": [
+            "composer self-update --2",
+            "composer install --no-dev --optimize-autoloader --ignore-platform-reqs",
+            "~\/.composer\/vendor\/bin\/php-scoper add-prefix --output-dir ..\/wp-sms-pro-namespaced --force",
+            "composer --working-dir=..\/wp-sms-pro-namespaced dump-autoload"
+        ],
+        "build-zip": [
+            "composer self-update --2",
+            "composer install --no-dev --optimize-autoloader --ignore-platform-reqs",
+            "~\/.composer\/vendor\/bin\/php-scoper add-prefix --output-dir ..\/..\/build\/wp-sms-pro --force",
+            "composer --working-dir=..\/..\/build\/wp-sms-pro dump-autoload",
+            "cd ..\/..\/build\/ && zip -rm wp-sms-pro.zip wp-sms-pro\/"
+        ]
+    }
+}

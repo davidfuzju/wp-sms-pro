@@ -1,0 +1,484 @@
+$primaryColor: #f88e40;
+$secondaryColor: #ef771f;
+$errorColor: #d63638;
+$errorHighlightColor: #fffbfb;
+$highlightColor: #fff9f4;
+$bordersColor: #d9d9d9;
+
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes button-loading-spinner {
+  from {
+    transform: rotate(0turn);
+  }
+
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes spinner-1 {
+  0% {
+    clip-path: polygon(50% 50%, 0 0, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
+  }
+
+  12.5% {
+    clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 0%, 100% 0%, 100% 0%);
+  }
+
+  25% {
+    clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 100%);
+  }
+
+  50% {
+    clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%);
+  }
+
+  62.5% {
+    clip-path: polygon(50% 50%, 100% 0, 100% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%);
+  }
+
+  75% {
+    clip-path: polygon(50% 50%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 50% 100%, 0% 100%);
+  }
+
+  100% {
+    clip-path: polygon(50% 50%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 0% 100%);
+  }
+}
+
+@keyframes spinner-2 {
+  0% {
+    transform: scaleY(1) rotate(0deg);
+  }
+
+  49.99% {
+    transform: scaleY(1) rotate(135deg);
+  }
+
+  50% {
+    transform: scaleY(-1) rotate(0deg);
+  }
+
+  100% {
+    transform: scaleY(-1) rotate(-135deg);
+  }
+}
+
+div#login {
+  width: 350px;
+}
+
+#loginform {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  margin-top: 0 !important;
+  padding: 0 !important;
+  overflow: unset;
+
+  .submit {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    gap: 10px;
+
+    #wp-submit .loading {
+      pointer-events: none;
+    }
+
+    .spinner {
+      border-color: rgba($color: #000000, $alpha: 0.5);
+    }
+  }
+}
+
+.message {
+  &.failure {
+    border-left-color: $errorColor;
+  }
+
+  animation: slide-up 0.4s ease;
+
+  &.shake {
+    animation: shake 0.3s cubic-bezier(0.19, 0.49, 0.38, 0.79) both;
+    animation-iteration-count: 1;
+    animation-iteration-count: 3;
+    transform: translateX(0);
+  }
+}
+
+div.login-form-container {
+  overflow: hidden;
+  width: 100%;
+  background: #fff;
+  border: 1px solid $bordersColor;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  div.otp-input {
+    margin-top: 40px;
+    width: 100%;
+    position: relative;
+    box-sizing: border-box;
+
+    label {
+      color: #222222;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .otp-digit-input {
+      width: 100%;
+      height: auto;
+      font-size: 14px !important;
+      outline: none;
+      border-radius: 8px;
+      margin: 0;
+      background: rgba(0, 0, 0, 0);
+      box-shadow: none;
+      border: 1px solid $bordersColor;
+      direction: ltr !important;
+      padding: 15px 10px !important;
+      letter-spacing: 20px;
+      text-align: center;
+
+      &.error,
+      &:focus.focus-error {
+        background-color: $errorHighlightColor;
+        border: 1px solid $errorColor;
+        outline: none;
+      }
+
+      &:focus {
+        border: 1px solid $primaryColor;
+        outline: none;
+      }
+    }
+
+    .rtl & {
+      flex-direction: row-reverse;
+    }
+  }
+
+  div.login-form-steps-container {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    margin-left: 0;
+
+    div.login-form-step {
+      box-sizing: border-box;
+      padding: 26px 24px 30px;
+    }
+  }
+
+  .request-new-code {
+    margin-top: 40px;
+    margin-bottom: 30px;
+
+    p {
+      color: #c1b9b9;
+      text-align: center;
+      margin-bottom: 2px;
+      font-weight: 400;
+      font-size: 14px;
+    }
+
+    a {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      display: block;
+      text-align: center;
+      font-size: 16px;
+      transition: filter 0.2s ease-in;
+
+      &[is-clicked="true"] {
+        filter: brightness(0.75);
+
+        .icon {
+          animation: button-loading-spinner 1s ease infinite;
+        }
+      }
+
+      span.icon {
+        position: relative;
+
+        &::before {
+          position: absolute;
+          left: 0px;
+          transform: translateY(2px);
+        }
+
+        &.rotating {
+          animation: button-loading-spinner 1s ease infinite;
+        }
+
+        &.rotate-once {
+          animation: button-loading-spinner 1s ease 1;
+        }
+      }
+    }
+  }
+
+  .wpsms-button {
+    width: 100%;
+    color: white;
+    background-color: $primaryColor;
+    border: none;
+    transition: 0.1s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+    padding: 13px 0px;
+    font-size: 14px;
+
+    &:hover {
+      background-color: $secondaryColor;
+    }
+
+    &:active,
+    &:focus {
+      background-color: $secondaryColor;
+      border: none;
+    }
+
+    &.loading {
+      span.spinner {
+        display: inline-flex;
+      }
+    }
+  }
+
+  div.or-separator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    span.line {
+      flex-grow: 1;
+      background-color: #e7e7e7;
+      height: 1.1px;
+    }
+
+    p {
+      padding: 0 11px;
+    }
+  }
+
+  div.login-form-step.step-zero {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    div.or-login-with-wp-sms-otp-section {
+      margin-top: 55px;
+
+      button.login-with-wp-sms-otp {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        span::before {
+          // transform: translateY(2px);
+          // display: block;
+        }
+      }
+    }
+  }
+
+  div.login-form-step.second-step {
+    display: flex;
+    flex-direction: column;
+
+    .title {
+      text-align: center;
+      color: #222222;
+      font-weight: 600;
+    }
+
+    h6 {
+      font-size: 14px;
+      font-weight: 400;
+      text-align: center;
+      margin-top: 4px;
+      color: #c1b9b9;
+    }
+
+    .input-box {
+      position: relative;
+      margin-top: 15px;
+      box-sizing: border-box;
+
+      .iti {
+        width: 100%;
+
+        &--show-flags {
+          input {
+            padding-left: 50px !important;
+
+            .rtl & {
+              padding-left: 15px !important;
+              padding-right: 50px !important;
+              direction: rtl;
+            }
+
+            &.iti__search-input {
+              padding: 9px 12px !important;
+              border: none !important;
+            }
+          }
+
+        }
+
+      }
+
+      label {
+        color: #222222;
+        font-size: 14px;
+        margin-bottom: 6px;
+      }
+
+      input {
+        width: 100%;
+        height: auto;
+        font-size: 13px !important;
+        outline: none;
+        margin: 0;
+        background: rgba(0, 0, 0, 0);
+        box-shadow: none;
+        direction: ltr;
+        text-align: left;
+        padding: 15px !important;
+        border-radius: 8px;
+        border: 1px solid #d9d9d9;
+        line-height: normal;
+
+        &:focus,
+        &:active {
+          outline: none;
+        }
+      }
+    }
+
+    div.or-separator {
+      margin-top: 55px;
+    }
+
+    .wp-sms-login-form-recaptcha {
+      margin-top: 16px;
+    }
+
+    .request-otp-button {
+      margin-top: 16px;
+    }
+
+    .or-login-regularly {
+      cursor: pointer;
+      user-select: none;
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 5.8px;
+      font-size: 14px;
+      position: relative;
+    }
+  }
+
+  div.login-form-step.third-step {
+    .title {
+      text-align: center;
+      color: #222222;
+      font-weight: 600;
+    }
+
+    h6 {
+      font-size: 14px;
+      font-weight: 400;
+      text-align: center;
+      margin-top: 4px;
+      color: #c1b9b9;
+    }
+
+    .verify-sms-otp {
+      margin-top: 16px;
+    }
+  }
+
+  div.login-form-step.two-factor-auth {
+    border-radius: 8px;
+    padding-bottom: 0 !important;
+
+    .title {
+      text-align: center;
+      color: #222222;
+      font-weight: 600;
+    }
+
+    h6 {
+      font-size: 14px;
+      font-weight: 400;
+      text-align: center;
+      margin-top: 4px;
+      color: #c1b9b9;
+    }
+
+    button.submit-two-factor-otp {
+      margin-top: 16px;
+    }
+  }
+
+  .shake {
+    animation: shake 0.2s cubic-bezier(0.19, 0.49, 0.38, 0.79) both;
+    animation-iteration-count: 1;
+    animation-iteration-count: 3;
+    transform: translateX(0);
+  }
+}
+
+#registerform{
+  label[for="mobile"],.iti--show-flags{
+    width: 100%;
+  }
+  .iti--show-flags input , p input{
+    font-size: 13px!important;
+  }
+  .iti__search-input{
+    padding: 9px 12px !important;
+    border: none !important;
+    margin: 0 !important;
+  }
+}
+
+.spinner {
+  width: 14px;
+  aspect-ratio: 1;
+  display: none;
+  border-radius: 50%;
+  border: 4px solid white;
+  animation: spinner-1 0.8s infinite linear alternate, spinner-2 1.6s infinite linear;
+
+  &.active {
+    display: inline-block;
+  }
+}
+
+.iti__search-input {
+  font-size: 13px !important;
+}

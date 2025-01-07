@@ -1,0 +1,43 @@
+{
+  "name": "wp-sms-pro",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "devDependencies": {
+    "@babel/core": "^7.20.12",
+    "@babel/preset-env": "^7.20.2",
+    "autoprefixer": "^10.4.13",
+    "babel-loader": "^9.1.2",
+    "browserslist": "^4.21.5",
+    "concurrently": "^7.6.0",
+    "fs-extra": "^11.1.0",
+    "glob": "^10.3.12",
+    "object-hash": "^3.0.0",
+    "postcss": "^8.4.21",
+    "sass": "^1.57.1",
+    "terser-webpack-plugin": "^5.3.6",
+    "watch": "^0.13.0",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
+    "yargs": "^17.6.2"
+  },
+  "scripts": {
+    "build-scripts": "node ./tasks/build-scripts.js",
+    "build-styles": "node ./tasks/build-styles.js",
+    "build-assets": "concurrently -c \"auto\" \"npm:build-scripts\" \"npm:build-styles\"",
+    "watch-scripts": "node ./tasks/build-scripts.js --development --watch",
+    "watch-styles": "node ./tasks/build-styles.js --watch",
+    "watch-assets": "concurrently -c \"auto\" \"npm:watch-scripts\" \"npm:watch-styles\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/veronalabs/plugins/wp-sms/wp-sms-pro.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/veronalabs/plugins/wp-sms/wp-sms-pro/issues"
+  },
+  "homepage": "https://gitlab.com/veronalabs/plugins/wp-sms/wp-sms-pro#readme",
+  "browserslist": "defaults"
+}

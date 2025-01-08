@@ -204,9 +204,12 @@ class LoginWithSmsOtp
                 }
             }
 
+            error_log('before nv_referral_code_handle_new_registration');
             if (function_exists('nv_referral_code_handle_new_registration')) {
+                error_log("nv_referral_code_handle_new_registration $user->ID: $referralCode");
                 nv_referral_code_handle_new_registration($user->ID, $referralCode);
             }
+            error_log('after nv_referral_code_handle_new_registration');
 
             if (\class_exists(UserLoginHandler::class)) {
                 $userLoginHandler = new UserLoginHandler($user);

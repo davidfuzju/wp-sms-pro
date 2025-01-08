@@ -259,10 +259,10 @@ div.login-form-container {
     }
 
     &:disabled {
-      background-color: gray; // 禁用状态背景色
-      color: #ccc; // 禁用状态文字颜色
-      cursor: not-allowed; // 鼠标指针样式
-      pointer-events: none; // 禁用点击事件
+      background-color: gray;
+      color: #ccc;
+      cursor: not-allowed;
+      pointer-events: none;
     }
 
     &.loading {

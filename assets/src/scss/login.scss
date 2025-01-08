@@ -204,7 +204,7 @@ div.login-form-container {
       font-size: 16px;
       transition: filter 0.2s ease-in;
 
-      &[is-clicked="true"] {
+      &[is-clicked='true'] {
         filter: brightness(0.75);
 
         .icon {
@@ -256,6 +256,13 @@ div.login-form-container {
     &:focus {
       background-color: $secondaryColor;
       border: none;
+    }
+
+    &:disabled {
+      background-color: gray; // 禁用状态背景色
+      color: #ccc; // 禁用状态文字颜色
+      cursor: not-allowed; // 鼠标指针样式
+      pointer-events: none; // 禁用点击事件
     }
 
     &.loading {
@@ -344,9 +351,7 @@ div.login-form-container {
               border: none !important;
             }
           }
-
         }
-
       }
 
       label {
@@ -452,14 +457,16 @@ div.login-form-container {
   }
 }
 
-#registerform{
-  label[for="mobile"],.iti--show-flags{
+#registerform {
+  label[for='mobile'],
+  .iti--show-flags {
     width: 100%;
   }
-  .iti--show-flags input , p input{
-    font-size: 13px!important;
+  .iti--show-flags input,
+  p input {
+    font-size: 13px !important;
   }
-  .iti__search-input{
+  .iti__search-input {
     padding: 9px 12px !important;
     border: none !important;
     margin: 0 !important;

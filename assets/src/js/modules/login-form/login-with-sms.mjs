@@ -72,7 +72,7 @@ function addSecondLoginStep() {
                 </div>
 
                 <!-- 按钮，一开始禁用 -->
-                <button class="request-otp-button wpsms-button disabled" disabled>
+                <button class="request-otp-button wpsms-button disabled">
                     <span class="spinner"></span>
                     <span>${data.l10n.request_otp_button_text}</span>
                 </button>
@@ -141,9 +141,9 @@ function addSecondLoginStep() {
     // 启用/禁用 requestCodeBtn
     function setRequestBtnEnabled(enabled) {
         if (enabled) {
-            requestCodeBtn.removeClass('disabled').prop('disabled', false)
+            requestCodeBtn.prop('disabled', false)
         } else {
-            requestCodeBtn.addClass('disabled').prop('disabled', true)
+            requestCodeBtn.prop('disabled', true)
         }
     }
 

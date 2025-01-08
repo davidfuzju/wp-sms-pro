@@ -479,7 +479,7 @@ function __verifyReferralCode() {
 function validateReferralCode(phoneNumber, referralCode) {
     return jQuery.ajax({
         method: 'POST',
-        url: ajaxUrl,
+        url: ajaxurl,
         data: {
             action: 'validate_referral_code',
             phone_number: phoneNumber,
@@ -495,7 +495,7 @@ function validateReferralCode(phoneNumber, referralCode) {
 function checkReferralCodeByPhone(phoneNumber) {
     return jQuery.ajax({
         method: 'POST',
-        url: ajaxUrl,
+        url: ajaxurl,
         data: {
             action: 'check_referral_code_by_phone',
             phone_number: phoneNumber,

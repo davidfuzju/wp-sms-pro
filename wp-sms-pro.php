@@ -4,7 +4,7 @@
  * Plugin Name: WP SMS Pro Pack
  * Plugin URI: https://wp-sms-pro.com/
  * Description: The professional pack adds many features, supports the most popular SMS gateways, and also integrates with other plugins.
- * Version: 4.3.6.6
+ * Version: 4.3.6.7
  * Author: VeronaLabs
  * Author URI: https://veronalabs.com/
  * Text Domain: wp-sms-pro
@@ -18,7 +18,7 @@ if (\file_exists(\dirname(__FILE__) . '/vendor/autoload.php')) {
     require \dirname(__FILE__) . '/vendor/autoload.php';
 }
 // Set the plugin version
-\define('WP_SMS_PRO_VERSION', '4.3.6.6');
+\define('WP_SMS_PRO_VERSION', '4.3.6.7');
 /*
  * Load Legacy functionalities
  */
@@ -90,56 +90,67 @@ add_action('wp_ajax_nopriv_check_referral_code_by_phone', 'nv_check_referral_cod
 
 function nv_check_referral_code_by_phone()
 {
-    if (! isset($_POST['phone_number'])) {
-        wp_send_json_error(
-            array('message' => 'Missing phone_number in POST data.',),
-            400
-        );
-    }
-
-    $inputPhoneNumber = (string) sanitize_text_field($_POST['phone_number']);
-
-    if (\class_exists(NumberParser::class)) {
-        $numberParser = new NumberParser($inputPhoneNumber);
-        $inputPhoneNumber = $numberParser->getValidNumber();
-        if (is_wp_error($inputPhoneNumber)) {
+    try {
+        if (!isset($_POST['phone_number'])) {
             wp_send_json_error(
-                array('message' => 'Invalid phone number'),
+                ['message' => 'Missing phone_number in POST data.'],
                 400
             );
         }
-    }
 
-    $user = Helper::getUserByPhoneNumber($inputPhoneNumber);
+        $inputPhoneNumber = (string) sanitize_text_field($_POST['phone_number']);
+        error_log('Input phone number: ' . $inputPhoneNumber);
 
-    if (empty($user)) {
-        wp_send_json_success(
-            array(
-                'is_registered' => false,
-                'has_referral_code' => false,
-                'message' => 'No user found with this phone number.'
-            )
-        );
-    } else {
-        $referral_code = get_user_meta($user->ID, 'wrc_ref_code', true);
+        if (\class_exists(NumberParser::class)) {
+            $numberParser = new NumberParser($inputPhoneNumber);
+            $inputPhoneNumber = $numberParser->getValidNumber();
 
-        if (empty($referral_code)) {
+            if (is_wp_error($inputPhoneNumber)) {
+                wp_send_json_error(
+                    ['message' => 'Invalid phone number'],
+                    400
+                );
+            }
+        }
+
+        error_log('Validated phone number: ' . $inputPhoneNumber);
+
+        $user = Helper::getUserByPhoneNumber($inputPhoneNumber);
+        error_log('User object: ' . print_r($user, true));
+
+        if (empty($user)) {
             wp_send_json_success(
-                array(
-                    'is_registered' => true,
+                [
+                    'is_registered' => false,
                     'has_referral_code' => false,
-                    'message' => 'User found but no referral code.',
-                )
+                    'message' => 'No user found with this phone number.'
+                ]
             );
         } else {
-            wp_send_json_success(
-                array(
-                    'is_registered' => true,
-                    'has_referral_code' => true,
-                    'message' => 'User found, referral code exists.',
-                )
-            );
+            $referral_code = get_user_meta($user->ID, 'wrc_ref_code', true);
+            error_log('Referral code: ' . $referral_code);
+
+            if (empty($referral_code)) {
+                wp_send_json_success(
+                    [
+                        'is_registered' => true,
+                        'has_referral_code' => false,
+                        'message' => 'User found but no referral code.',
+                    ]
+                );
+            } else {
+                wp_send_json_success(
+                    [
+                        'is_registered' => true,
+                        'has_referral_code' => true,
+                        'message' => 'User found, referral code exists.',
+                    ]
+                );
+            }
         }
+    } catch (Exception $e) {
+        error_log('Exception: ' . $e->getMessage());
+        wp_send_json_error(['message' => $e->getMessage()], 500);
     }
 }
 

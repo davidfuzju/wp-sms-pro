@@ -96,7 +96,30 @@ class LoginWithSmsOtp
     {
         WPSmsPro()->enqueueScript('assets/dist/js/login-form/main.js', ['jquery']);
         $scriptHandle = WPSmsPro()->enqueueScript('assets/dist/js/login.js', ['jquery']);
-        wp_localize_script($scriptHandle, 'WPSmsProLoginWithSmsData', ["l10n" => ['login_with_sms_title' => __('Login with SMS', 'wp-sms-pro'), 'login_with_sms_code_subtitle' => __('Please Enter Your Verification Code', 'wp-sms-pro'), 'login_with_sms_code_label' => __('Verification Code', 'wp-sms-pro'), 'login_with_sms_number_subtitle' => __('Please Enter Your Phone Number', 'wp-sms-pro'), 'or' => __('OR', 'wp-sms-pro'), 'login_button_text' => __('Login with SMS', 'wp-sms-pro'), 'login_with_email_text' => __('Login with Username/Email address', 'wp-sms-pro'), 'phone_number_field_label' => __('Phone Number', 'wp-sms-pro'), 'request_otp_button_text' => __('Continue', 'wp-sms-pro'), 'verify_button_text' => __('Verify', 'wp-sms-pro'), 'request_new_code_text' => __('Didn\'t Receive The Code?', 'wp-sms-pro'), 'request_new_code_link' => __('Request New Code', 'wp-sms-pro'), 'please_fill_digits_notice' => __('Please fill all the digit inputs', 'wp-sms-pro'), 'invalid_phone_number' => __('Invalid phone number!', 'wp-sms-pro')], "options" => ['intl_input_is_active' => WPSmsOptionsManager::getOption('international_mobile'), 'is_rtl_page' => is_rtl()], "elements" => ['mobile_field' => $this->renderMobileInputField()], "recaptcha" => ['site_key' => isset($this->recaptcha) ? $this->recaptcha->getSiteKey() : null], "endPoints" => $this->endPoints]);
+        wp_localize_script($scriptHandle, 'WPSmsProLoginWithSmsData', [
+            "l10n" => [
+                'login_with_sms_title' => __('Login with SMS', 'wp-sms-pro'),
+                'login_with_sms_code_subtitle' => __('Please Enter Your Verification Code', 'wp-sms-pro'),
+                'login_with_sms_code_label' => __('Verification Code', 'wp-sms-pro'),
+                'login_with_sms_number_subtitle' => __('Please Enter Your Phone Number', 'wp-sms-pro'),
+                'or' => __('OR', 'wp-sms-pro'),
+                'login_button_text' => __('Login with SMS', 'wp-sms-pro'),
+                'login_with_email_text' => __('Login with Username/Email address', 'wp-sms-pro'),
+                'phone_number_field_label' => __('Phone Number', 'wp-sms-pro'),
+                'referral_code_field_label' => __('Referral Code', 'wp-sms-pro'),
+                'request_otp_button_text' => __('Continue', 'wp-sms-pro'),
+                'verify_button_text' => __('Verify', 'wp-sms-pro'),
+                'request_new_code_text' => __('Didn\'t Receive The Code?', 'wp-sms-pro'),
+                'request_new_code_link' => __('Request New Code', 'wp-sms-pro'),
+                'please_fill_digits_notice' => __('Please fill all the digit inputs', 'wp-sms-pro'),
+                'invalid_phone_number' => __('Invalid phone number!', 'wp-sms-pro'),
+                'invalid_referral_code' => __('Invalid referral code!', 'wp-sms-pro'),
+            ],
+            "options" => ['intl_input_is_active' => WPSmsOptionsManager::getOption('international_mobile'), 'is_rtl_page' => is_rtl()],
+            "elements" => ['mobile_field' => $this->renderMobileInputField()],
+            "recaptcha" => ['site_key' => isset($this->recaptcha) ? $this->recaptcha->getSiteKey() : null],
+            "endPoints" => $this->endPoints
+        ]);
         /// 加入 admin-ajax 的 url
         wp_localize_script($scriptHandle, 'ajaxurl', admin_url('admin-ajax.php'));
     }
@@ -204,12 +227,9 @@ class LoginWithSmsOtp
                 }
             }
 
-            error_log('before nv_referral_code_handle_new_registration');
             if (function_exists('nv_referral_code_handle_new_registration')) {
-                error_log("nv_referral_code_handle_new_registration $user->ID: $referralCode");
                 nv_referral_code_handle_new_registration($user->ID, $referralCode);
             }
-            error_log('after nv_referral_code_handle_new_registration');
 
             if (\class_exists(UserLoginHandler::class)) {
                 $userLoginHandler = new UserLoginHandler($user);

@@ -65,13 +65,11 @@ function addSecondLoginStep() {
                     ${data.elements.mobile_field}
                 </div>
 
-                <!-- 这个就是“Referral Code”输入框，一开始隐藏 -->
                 <div id="referralCodeBox" class="input-box" style="display: none;">
-                    <label for="referralCode">Referral Code</label>
+                    <label for="referralCode">${data.l10n.referral_code_field_label}</label>
                     <input type="text" id="referralCode" name="referralCode" />
                 </div>
 
-                <!-- 按钮，一开始禁用 -->
                 <button class="request-otp-button wpsms-button" disabled>
                     <span class="spinner"></span>
                     <span>${data.l10n.request_otp_button_text}</span>

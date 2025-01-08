@@ -72,7 +72,7 @@ function addSecondLoginStep() {
                 </div>
 
                 <!-- 按钮，一开始禁用 -->
-                <button class="request-otp-button wpsms-button disabled">
+                <button class="request-otp-button wpsms-button" disabled>
                     <span class="spinner"></span>
                     <span>${data.l10n.request_otp_button_text}</span>
                 </button>
@@ -247,7 +247,10 @@ function addSecondLoginStep() {
     })
 
     referralCodeField.on('input', function () {
-        if (!__verifyReferralCode()) return
+        if (!__verifyReferralCode()) {
+            setRequestBtnEnabled(false)
+            return
+        }
 
         lockField(phoneNumberField, true)
         lockField(referralCodeField, true)
@@ -265,12 +268,16 @@ function addSecondLoginStep() {
 
                         utils.notices.removeAllNotices()
                         utils.notices.addSuccessNotice(res.data?.message || 'Referral code valid')
+
+                        setRequestBtnEnabled(true)
                     } else {
                         // 验证推荐码未通过
                         resetCapturedReferralCode()
 
                         utils.notices.removeAllNotices()
                         utils.notices.addErrorNotice(res.data?.message || 'Invalid referral code')
+
+                        setRequestBtnEnabled(false)
                     }
                 } else {
                     // 业务请求失败
@@ -278,6 +285,8 @@ function addSecondLoginStep() {
 
                     utils.notices.removeAllNotices()
                     utils.notices.addErrorNotice(res.data?.message || 'Invalid referral code')
+
+                    setRequestBtnEnabled(false)
                 }
             })
             .fail((jqXhr) => {
@@ -286,6 +295,8 @@ function addSecondLoginStep() {
 
                 utils.notices.removeAllNotices()
                 utils.notices.addErrorNotice(jqXhr.responseJSON?.message || 'Server error')
+
+                setRequestBtnEnabled(false)
             })
             .always(() => {
                 setTimeout(() => {

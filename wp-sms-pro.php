@@ -4,7 +4,7 @@
  * Plugin Name: WP SMS Pro Pack
  * Plugin URI: https://wp-sms-pro.com/
  * Description: The professional pack adds many features, supports the most popular SMS gateways, and also integrates with other plugins.
- * Version: 4.3.6.5
+ * Version: 4.3.6.6
  * Author: VeronaLabs
  * Author URI: https://veronalabs.com/
  * Text Domain: wp-sms-pro
@@ -18,7 +18,7 @@ if (\file_exists(\dirname(__FILE__) . '/vendor/autoload.php')) {
     require \dirname(__FILE__) . '/vendor/autoload.php';
 }
 // Set the plugin version
-\define('WP_SMS_PRO_VERSION', '4.3.6.5');
+\define('WP_SMS_PRO_VERSION', '4.3.6.6');
 /*
  * Load Legacy functionalities
  */
@@ -97,10 +97,10 @@ function nv_check_referral_code_by_phone()
         );
     }
 
-    $phone_number = (string) sanitize_text_field($_POST['phone_number']);
+    $inputPhoneNumber = (string) sanitize_text_field($_POST['phone_number']);
 
     if (\class_exists(NumberParser::class)) {
-        $numberParser = new NumberParser($phone_number);
+        $numberParser = new NumberParser($inputPhoneNumber);
         $inputPhoneNumber = $numberParser->getValidNumber();
         if (is_wp_error($inputPhoneNumber)) {
             wp_send_json_error(

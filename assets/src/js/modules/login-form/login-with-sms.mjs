@@ -222,7 +222,7 @@ function addSecondLoginStep() {
                     setRequestBtnEnabled(false)
                 }
             })
-            .fail(() => {
+            .fail((jqXhr) => {
                 // 请求失败
                 utils.notices.removeAllNotices()
                 utils.notices.addErrorNotice(jqXhr.responseJSON?.message || 'Server error')

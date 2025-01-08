@@ -236,11 +236,6 @@ class LoginWithSmsOtp
         }
     }
 
-
-    // ----------------------------------------------
-    // 后端接口逻辑
-    // ----------------------------------------------
-
     public function nv_check_referral_code_by_phone()
     {
         if (!isset($_POST['phone_number'])) {
@@ -268,7 +263,6 @@ class LoginWithSmsOtp
         error_log('Validated phone number: ' . $inputPhoneNumber);
 
         $user = Helper::getUserByPhoneNumber($inputPhoneNumber);
-        error_log('User object: ' . print_r($user, true));
 
         if (empty($user)) {
             wp_send_json_success(

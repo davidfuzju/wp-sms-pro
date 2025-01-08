@@ -184,9 +184,12 @@ function addSecondLoginStep() {
     //////////////////////////////////////////////////////////////////////////
     // 核心逻辑1：监听 phoneNumber 输入
     //////////////////////////////////////////////////////////////////////////
+    console.log('script loaded')
     phoneNumberField.on('keyup input', function () {
+        console.log(`${phoneNumberField.getPhoneNumber()}, keyup input`)
         // 1) 本地校验
         if (!__verifyPhoneNumber()) {
+            console.log(`${phoneNumberField.getPhoneNumber()}, __verifyPhoneNumber passed`)
             // 只要输入框内值发生错误，就重置 referral code 暂存
             resetCapturedReferralCode()
             // 校验失败 => 隐藏 referralCodeBox, 按钮禁用
@@ -194,6 +197,8 @@ function addSecondLoginStep() {
             setRequestBtnEnabled(false)
             return
         }
+
+        console.log(`${phoneNumberField.getPhoneNumber()}, __verifyPhoneNumber not passed`)
 
         // 2) 校验成功 => 锁定 phoneNumber，显示按钮loading，发起 checkReferralCodeByPhone
         lockField(phoneNumberField, true)

@@ -4,7 +4,7 @@
  * Plugin Name: WP SMS Pro Pack
  * Plugin URI: https://wp-sms-pro.com/
  * Description: The professional pack adds many features, supports the most popular SMS gateways, and also integrates with other plugins.
- * Version: 4.3.6.8
+ * Version: 4.3.6.9
  * Author: VeronaLabs
  * Author URI: https://veronalabs.com/
  * Text Domain: wp-sms-pro
@@ -18,7 +18,7 @@ if (\file_exists(\dirname(__FILE__) . '/vendor/autoload.php')) {
     require \dirname(__FILE__) . '/vendor/autoload.php';
 }
 // Set the plugin version
-\define('WP_SMS_PRO_VERSION', '4.3.6.8');
+\define('WP_SMS_PRO_VERSION', '4.3.6.9');
 /*
  * Load Legacy functionalities
  */
@@ -92,117 +92,123 @@ add_action('wp_ajax_nopriv_check_referral_code_by_phone', 'nv_check_referral_cod
 
 function nv_check_referral_code_by_phone()
 {
-    try {
-        if (!isset($_POST['phone_number'])) {
-            wp_send_json_error(
-                ['message' => 'Missing phone_number in POST data.'],
-                400
-            );
-        }
-
-        $inputPhoneNumber = (string) sanitize_text_field($_POST['phone_number']);
-        error_log('Input phone number: ' . $inputPhoneNumber);
-
-        if (\class_exists(NumberParser::class)) {
-            $numberParser = new NumberParser($inputPhoneNumber);
-            $inputPhoneNumber = $numberParser->getValidNumber();
-
-            if (is_wp_error($inputPhoneNumber)) {
-                wp_send_json_error(
-                    ['message' => 'Invalid phone number'],
-                    400
-                );
-            }
-        }
-
-        error_log('Validated phone number: ' . $inputPhoneNumber);
-
-        $user = Helper::getUserByPhoneNumber($inputPhoneNumber);
-        error_log('User object: ' . print_r($user, true));
-
-        if (empty($user)) {
-            wp_send_json_success(
-                [
-                    'is_registered' => false,
-                    'has_referral_code' => false,
-                    'message' => 'No user found with this phone number.'
-                ]
-            );
-        } else {
-            $referral_code = get_user_meta($user->ID, 'wrc_ref_code', true);
-            error_log('Referral code: ' . $referral_code);
-
-            if (empty($referral_code)) {
-                wp_send_json_success(
-                    [
-                        'is_registered' => true,
-                        'has_referral_code' => false,
-                        'message' => 'User found but no referral code.',
-                    ]
-                );
-            } else {
-                wp_send_json_success(
-                    [
-                        'is_registered' => true,
-                        'has_referral_code' => true,
-                        'message' => 'User found, referral code exists.',
-                    ]
-                );
-            }
-        }
-    } catch (Exception $e) {
-        error_log('Exception: ' . $e->getMessage());
-        wp_send_json_error(['message' => $e->getMessage()], 500);
-    }
+    error_log('AJAX called for logged-in users');
+    wp_send_json_success(['message' => 'AJAX success for logged-in users']);
 }
 
-add_action('wp_ajax_validate_referral_code', 'nv_validate_referral_code');
-add_action('wp_ajax_nopriv_validate_referral_code', 'nv_validate_referral_code');
+// function nv_check_referral_code_by_phone()
+// {
+//     try {
+//         if (!isset($_POST['phone_number'])) {
+//             wp_send_json_error(
+//                 ['message' => 'Missing phone_number in POST data.'],
+//                 400
+//             );
+//         }
 
-function nv_validate_referral_code()
-{
-    // 1) 读取并过滤请求参数
-    $phone_number = isset($_POST['phone_number']) ? sanitize_text_field($_POST['phone_number']) : '';
-    $referral_code = isset($_POST['referral_code']) ? sanitize_text_field($_POST['referral_code']) : '';
+//         $inputPhoneNumber = (string) sanitize_text_field($_POST['phone_number']);
+//         error_log('Input phone number: ' . $inputPhoneNumber);
 
-    // 2) （可选）检查必填项
-    if (empty($referral_code)) {
-        wp_send_json_error(
-            array('message' => 'Missing referral_code in POST data.'),
-            400
-        );
-    }
+//         if (\class_exists(NumberParser::class)) {
+//             $numberParser = new NumberParser($inputPhoneNumber);
+//             $inputPhoneNumber = $numberParser->getValidNumber();
 
-    // 3) 查询是否存在这样的 referral code
-    //   这里假设 referral code 存储在 user_meta 的 `wrc_ref_code` 键上
-    $users = get_users(array(
-        'meta_key'   => 'wrc_ref_code',
-        'meta_value' => $referral_code,
-        'number'     => 1,            // 只要一个匹配结果
-        'fields'     => 'ID',         // 只需要用户 ID 即可
-    ));
+//             if (is_wp_error($inputPhoneNumber)) {
+//                 wp_send_json_error(
+//                     ['message' => 'Invalid phone number'],
+//                     400
+//                 );
+//             }
+//         }
 
-    if (empty($users)) {
-        // 找不到任何用户使用了这个 referral code
-        wp_send_json_success(
-            array(
-                'result' => false,
-                'message' => 'Referral code is invalid.',
-            )
-        );
-    }
+//         error_log('Validated phone number: ' . $inputPhoneNumber);
 
-    // 如果代码走到这里，说明至少有一个用户在 user_meta 里存着 `wrc_ref_code = $referral_code`
-    // 你可以再做更多业务检查，比如：
-    //   - 是否这个 referral code 已经失效或过期？
-    //   - 是否这个 referral code 对应的用户与 phone_number 有关联？
-    //   根据你的需求来写
+//         $user = Helper::getUserByPhoneNumber($inputPhoneNumber);
+//         error_log('User object: ' . print_r($user, true));
 
-    // 如果只是简单说明“referral code 存在”，则返回成功
-    wp_send_json_success(
-        array(
-            'result' => true,
-            'message' => 'Referral code is valid.',
-        )
-    );
-}
+//         if (empty($user)) {
+//             wp_send_json_success(
+//                 [
+//                     'is_registered' => false,
+//                     'has_referral_code' => false,
+//                     'message' => 'No user found with this phone number.'
+//                 ]
+//             );
+//         } else {
+//             $referral_code = get_user_meta($user->ID, 'wrc_ref_code', true);
+//             error_log('Referral code: ' . $referral_code);
+
+//             if (empty($referral_code)) {
+//                 wp_send_json_success(
+//                     [
+//                         'is_registered' => true,
+//                         'has_referral_code' => false,
+//                         'message' => 'User found but no referral code.',
+//                     ]
+//                 );
+//             } else {
+//                 wp_send_json_success(
+//                     [
+//                         'is_registered' => true,
+//                         'has_referral_code' => true,
+//                         'message' => 'User found, referral code exists.',
+//                     ]
+//                 );
+//             }
+//         }
+//     } catch (Exception $e) {
+//         error_log('Exception: ' . $e->getMessage());
+//         wp_send_json_error(['message' => $e->getMessage()], 500);
+//     }
+// }
+
+// add_action('wp_ajax_validate_referral_code', 'nv_validate_referral_code');
+// add_action('wp_ajax_nopriv_validate_referral_code', 'nv_validate_referral_code');
+
+// function nv_validate_referral_code()
+// {
+//     // 1) 读取并过滤请求参数
+//     $phone_number = isset($_POST['phone_number']) ? sanitize_text_field($_POST['phone_number']) : '';
+//     $referral_code = isset($_POST['referral_code']) ? sanitize_text_field($_POST['referral_code']) : '';
+
+//     // 2) （可选）检查必填项
+//     if (empty($referral_code)) {
+//         wp_send_json_error(
+//             array('message' => 'Missing referral_code in POST data.'),
+//             400
+//         );
+//     }
+
+//     // 3) 查询是否存在这样的 referral code
+//     //   这里假设 referral code 存储在 user_meta 的 `wrc_ref_code` 键上
+//     $users = get_users(array(
+//         'meta_key'   => 'wrc_ref_code',
+//         'meta_value' => $referral_code,
+//         'number'     => 1,            // 只要一个匹配结果
+//         'fields'     => 'ID',         // 只需要用户 ID 即可
+//     ));
+
+//     if (empty($users)) {
+//         // 找不到任何用户使用了这个 referral code
+//         wp_send_json_success(
+//             array(
+//                 'result' => false,
+//                 'message' => 'Referral code is invalid.',
+//             )
+//         );
+//     }
+
+//     // 如果代码走到这里，说明至少有一个用户在 user_meta 里存着 `wrc_ref_code = $referral_code`
+//     // 你可以再做更多业务检查，比如：
+//     //   - 是否这个 referral code 已经失效或过期？
+//     //   - 是否这个 referral code 对应的用户与 phone_number 有关联？
+//     //   根据你的需求来写
+
+//     // 如果只是简单说明“referral code 存在”，则返回成功
+//     wp_send_json_success(
+//         array(
+//             'result' => true,
+//             'message' => 'Referral code is valid.',
+//         )
+//     );
+// }

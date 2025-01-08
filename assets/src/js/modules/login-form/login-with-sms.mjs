@@ -92,7 +92,6 @@ function addSecondLoginStep() {
     utils.steps.addRightHandStep(secondSlide)
 
     let intlTelInputInstance
-    let capturedReferralCode = '' // 用户成功验证过的 referral code 暂存
 
     const loginWithEmailButton = secondSlide.children('.or-login-regularly')
     const requestCodeBtn = secondSlide.children('.request-otp-button')
@@ -130,7 +129,6 @@ function addSecondLoginStep() {
     // 统一的锁定/解锁字段函数
     // ------------------------------------------------------------------------
     function resetCapturedReferralCode() {
-        capturedReferralCode = ''
         elems.capturedReferralCode = ''
     }
 
@@ -263,7 +261,6 @@ function addSecondLoginStep() {
                     /// 业务请求成功
                     if (res.data.result) {
                         // 验证推荐码通过
-                        capturedReferralCode = referralCodeField.getReferralCode()
                         elems.capturedReferralCode = referralCodeField.getReferralCode()
 
                         utils.notices.removeAllNotices()
@@ -405,7 +402,7 @@ function addThirdLoginStep() {
 
         verificationBtn.addClass('loading')
 
-        verifyCode(elems.phoneNumberField.getPhoneNumber(), code)
+        verifyCode(elems.phoneNumberField.getPhoneNumber(), code, elems.capturedReferralCode)
             .done((data) => {
                 utils.notices.removeAllNotices()
                 utils.notices.addSuccessNotice(data.message)

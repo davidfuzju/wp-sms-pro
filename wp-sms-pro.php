@@ -4,7 +4,7 @@
  * Plugin Name: WP SMS Pro Pack
  * Plugin URI: https://wp-sms-pro.com/
  * Description: The professional pack adds many features, supports the most popular SMS gateways, and also integrates with other plugins.
- * Version: 4.3.6.10
+ * Version: 4.3.6.11
  * Author: VeronaLabs
  * Author URI: https://veronalabs.com/
  * Text Domain: wp-sms-pro
@@ -18,7 +18,7 @@ if (\file_exists(\dirname(__FILE__) . '/vendor/autoload.php')) {
     require \dirname(__FILE__) . '/vendor/autoload.php';
 }
 // Set the plugin version
-\define('WP_SMS_PRO_VERSION', '4.3.6.10');
+\define('WP_SMS_PRO_VERSION', '4.3.6.11');
 /*
  * Load Legacy functionalities
  */
@@ -87,7 +87,7 @@ error_log('hellow world');
 // ----------------------------------------------
 
 /// 暂时将 referral code 查询代码放在此处
-add_action('wp_ajax_check_referral_code_by_phone', 'nv_check_referral_code_by_phone');
+//add_action('wp_ajax_check_referral_code_by_phone', 'nv_check_referral_code_by_phone');
 add_action('wp_ajax_nopriv_check_referral_code_by_phone', 'nv_check_referral_code_by_phone');
 
 function nv_check_referral_code_by_phone()

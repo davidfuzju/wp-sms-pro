@@ -8,6 +8,7 @@ var data
 var initiationPromise
 
 var isNewUser = false
+const referralCodeLengthLimit = 12
 
 function init(initialData) {
     if (typeof initiationPromise == 'undefined')
@@ -121,7 +122,7 @@ function addSecondLoginStep() {
     // referralCode 输入框
     const referralCodeField = jQuery('#referralCode').extend({
         getReferralCode() {
-            return this.val().trim()
+            return this.val().trim().substring(0, referralCodeLengthLimit)
         },
     })
 
@@ -184,12 +185,9 @@ function addSecondLoginStep() {
     //////////////////////////////////////////////////////////////////////////
     // 核心逻辑1：监听 phoneNumber 输入
     //////////////////////////////////////////////////////////////////////////
-    console.log('script loaded')
-    phoneNumberField.on('keyup input', function () {
-        console.log(`${phoneNumberField.getPhoneNumber()}, keyup input`)
+    phoneNumberField.on('input', function () {
         // 1) 本地校验
         if (!__verifyPhoneNumber()) {
-            console.log(`${phoneNumberField.getPhoneNumber()}, __verifyPhoneNumber passed`)
             // 只要输入框内值发生错误，就重置 referral code 暂存
             resetCapturedReferralCode()
             // 校验失败 => 隐藏 referralCodeBox, 按钮禁用
@@ -197,8 +195,6 @@ function addSecondLoginStep() {
             setRequestBtnEnabled(false)
             return
         }
-
-        console.log(`${phoneNumberField.getPhoneNumber()}, __verifyPhoneNumber not passed`)
 
         // 2) 校验成功 => 锁定 phoneNumber，显示按钮loading，发起 checkReferralCodeByPhone
         lockField(phoneNumberField, true)
@@ -250,7 +246,7 @@ function addSecondLoginStep() {
         e.key == 'Enter' && requestCodeBtn.trigger('click')
     })
 
-    referralCodeField.on('keyup input', function () {
+    referralCodeField.on('input', function () {
         if (!__verifyReferralCode()) return
 
         lockField(phoneNumberField, true)
@@ -473,7 +469,7 @@ function verifyReferralCode() {
  * @returns
  */
 function __verifyReferralCode() {
-    return elems.referralCodeField.getReferralCode() == 12
+    return elems.referralCodeField.getReferralCode().length == referralCodeLengthLimit
 }
 /**
  * API 请求站点后端， 查询当前手机号和推荐码是否合法

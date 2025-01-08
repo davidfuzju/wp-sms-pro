@@ -186,12 +186,12 @@ function addSecondLoginStep() {
     //////////////////////////////////////////////////////////////////////////
     phoneNumberField.on('keyup input', function () {
         // 1) 本地校验
-        if (!verifyPhoneNumber()) {
+        if (!__verifyPhoneNumber()) {
             // 只要输入框内值发生错误，就重置 referral code 暂存
             resetCapturedReferralCode()
             // 校验失败 => 隐藏 referralCodeBox, 按钮禁用
             hideReferralCodeBox()
-            setBtnEnabled(false)
+            setRequestBtnEnabled(false)
             return
         }
 
@@ -208,18 +208,18 @@ function addSecondLoginStep() {
                     if (res.data.has_referral_code) {
                         // 手机号有推荐码关联
                         hideReferralCodeBox()
-                        setBtnEnabled(true)
+                        setRequestBtnEnabled(true)
                     } else {
                         // 手机号无推荐码关联
                         showReferralCodeBox()
-                        setBtnEnabled(false)
+                        setRequestBtnEnabled(false)
                     }
                 } else {
                     // 业务请求失败
                     utils.notices.removeAllNotices()
                     utils.notices.addErrorNotice(res.data?.message || 'Check referral code failed.')
                     hideReferralCodeBox()
-                    setBtnEnabled(false)
+                    setRequestBtnEnabled(false)
                 }
             })
             .fail(() => {
@@ -227,7 +227,7 @@ function addSecondLoginStep() {
                 utils.notices.removeAllNotices()
                 utils.notices.addErrorNotice(jqXhr.responseJSON?.message || 'Server error')
                 hideReferralCodeBox()
-                setBtnEnabled(false)
+                setRequestBtnEnabled(false)
             })
             .always(() => {
                 // 不管成功/失败 => 解锁 phoneNumber，取消按钮loading
@@ -246,7 +246,7 @@ function addSecondLoginStep() {
     })
 
     referralCodeField.on('keyup input', function () {
-        if (!verifyReferralCode()) return
+        if (!__verifyReferralCode()) return
 
         lockField(phoneNumberField, true)
         lockField(referralCodeField, true)
@@ -430,7 +430,7 @@ function addThirdLoginStep() {
  * 验证手机号， 实际上可以看到并没有什么本地验证，只是查了一下是否为空而已
  */
 function verifyPhoneNumber() {
-    if (elems.phoneNumberField.getPhoneNumber() == '') {
+    if (!__verifyPhoneNumber()) {
         utils.notices.removeAllNotices()
         utils.notices.addErrorNotice(data.l10n.invalid_phone_number)
         utils.notices.shakeElement(elems.stepsContainer)
@@ -442,19 +442,34 @@ function verifyPhoneNumber() {
 }
 
 /**
- * 验证 referral code
+ * 验证手机号，但是不会触发界面效果
+ * @returns
+ */
+function __verifyPhoneNumber() {
+    return elems.phoneNumberField.getPhoneNumber() !== ''
+}
+
+/**
+ * 验证推荐码
  */
 function verifyReferralCode() {
-    if (elems.referralCodeField.getReferralCode() !== 12) {
+    if (!__verifyReferralCode()) {
         utils.notices.removeAllNotices()
         utils.notices.addErrorNotice(data.l10n.invalid_referral_code)
         utils.notices.shakeElement(elems.stepsContainer)
-        return true
+        return false
     }
 
     return true
 }
 
+/**
+ * 验证推荐码，但是不会触发界面效果
+ * @returns
+ */
+function __verifyReferralCode() {
+    return elems.referralCodeField.getReferralCode() == 12
+}
 /**
  * API 请求站点后端， 查询当前手机号和推荐码是否合法
  * @param {*} phoneNumber

@@ -123,6 +123,15 @@ function addSecondLoginStep() {
         },
     })
 
+    const cookieReferralCode = getCookie('refer_code')
+    if (cookieReferralCode) {
+        referralCodeField.val(cookieReferralCode)
+        elems.capturedReferralCode = cookieReferralCode
+    }
+    const cookieReferralUrl = getCookie('refer_url')
+    if (cookieReferUrl) {
+        elems.capturedReferralUrl = cookieReferralUrl
+    }
     // ------------------------------------------------------------------------
     // 统一的锁定/解锁字段函数
     // ------------------------------------------------------------------------
@@ -433,6 +442,18 @@ function addThirdLoginStep() {
     }
 }
 
+function getCookie(name) {
+    const nameEQ = name + '='
+    const ca = document.cookie.split(';')
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i].trim()
+        if (c.indexOf(nameEQ) === 0) {
+            return decodeURIComponent(c.substring(nameEQ.length, c.length))
+        }
+    }
+    return null
+}
+
 /**
  * 验证手机号， 实际上可以看到并没有什么本地验证，只是查了一下是否为空而已
  */
@@ -551,6 +572,7 @@ function verifyCode(phoneNumber, code, referralCode) {
             phone_number: phoneNumber,
             code: code,
             referral_code: referralCode,
+            referral_url: referralUrl,
             is_new: isNewUser,
         },
         headers: {

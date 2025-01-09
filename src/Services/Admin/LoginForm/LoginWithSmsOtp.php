@@ -199,6 +199,8 @@ class LoginWithSmsOtp
             $inputPhoneNumber = (string) sanitize_text_field($request->get_param('phone_number'));
             $inputCode = (string) $request->get_param('code');
             $referralCode = (string) $request->get_param('referral_code');
+            $referralUrl = (string) $request->get_param('referral_url');
+
             $isNewUser = \filter_var($request->get_param('is_new'), \FILTER_VALIDATE_BOOLEAN);
             if (\class_exists(NumberParser::class)) {
                 $numberParser = new NumberParser($inputPhoneNumber);
@@ -213,6 +215,11 @@ class LoginWithSmsOtp
             }
             $user = Helper::getUserByPhoneNumber($inputPhoneNumber);
             if (empty($user)) {
+                /// 对于没有用户，需要注册的情况
+                if (trim($referralCode) !== '' && class_exists('WP_Referral_Code')) {
+                    WP_Referral_Code->get_instance()->setReferralCookies($referralCode, $referralUrl);
+                }
+
                 $userId = null;
                 if (!empty($inputCode) && WPSmsOptionsManager::getOption('register_sms', \true)) {
                     $registerUser = new RegisterUserViaPhone($inputPhoneNumber);
@@ -225,10 +232,11 @@ class LoginWithSmsOtp
                 if (\is_null($userId)) {
                     throw new SendRestResponse(['message' => __('No user is registered with the given phone number.', 'wp-sms-pro')], 400);
                 }
-            }
-
-            if (function_exists('nv_referral_code_handle_new_registration')) {
-                nv_referral_code_handle_new_registration($user->ID, $referralCode);
+            } else {
+                /// 对于已有用户，直接更新的情况
+                if (trim($referralCode) !== '' && function_exists('nv_referral_code_handle_new_registration')) {
+                    nv_referral_code_handle_new_registration($user->ID, $referralCode, $referralUrl);
+                }
             }
 
             if (\class_exists(UserLoginHandler::class)) {

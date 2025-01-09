@@ -442,6 +442,37 @@ function addThirdLoginStep() {
     }
 }
 
+function empty(value) {
+    // null 或 undefined
+    if (value == null) return true
+
+    // 布尔类型 false
+    if (typeof value === 'boolean') return value === false
+
+    // 数字或可转数字字符串
+    if ((typeof value === 'number' && value === 0) || value === '0') {
+        return true
+    }
+
+    // 字符串
+    if (typeof value === 'string') {
+        return value.trim().length === 0
+    }
+
+    // 数组
+    if (Array.isArray(value)) {
+        return value.length === 0
+    }
+
+    // 对象
+    if (typeof value === 'object') {
+        return Object.keys(value).length === 0
+    }
+
+    // 其他情况视需要而定
+    return false
+}
+
 /**
  * 获取 cookie key 名称对应的
  * @param {*} name

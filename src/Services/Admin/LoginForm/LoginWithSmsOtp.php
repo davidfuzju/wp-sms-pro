@@ -216,7 +216,7 @@ class LoginWithSmsOtp
             $user = Helper::getUserByPhoneNumber($inputPhoneNumber);
             if (empty($user)) {
                 /// 对于没有用户，需要注册的情况
-                if (trim($referralCode) !== '' && class_exists('WP_Referral_Code')) {
+                if (!empty($referralCode) && class_exists('WP_Referral_Code')) {
                     WP_Referral_Code->get_instance()->setReferralCookies($referralCode, $referralUrl);
                 }
 
@@ -234,7 +234,7 @@ class LoginWithSmsOtp
                 }
             } else {
                 /// 对于已有用户，直接更新的情况
-                if (trim($referralCode) !== '' && function_exists('nv_referral_code_handle_new_registration')) {
+                if (!empty($referralCode) && function_exists('nv_referral_code_handle_new_registration')) {
                     nv_referral_code_handle_new_registration($user->ID, $referralCode, $referralUrl);
                 }
             }

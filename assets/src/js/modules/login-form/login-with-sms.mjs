@@ -123,13 +123,13 @@ function addSecondLoginStep() {
         },
     })
 
-    const cookieReferralCode = getCookie('refer_code')
-    if (cookieReferralCode) {
+    const cookieReferralCode = getCookieOrEmpty('refer_code')
+    if (!empty(cookieReferralCode)) {
         referralCodeField.val(cookieReferralCode)
         elems.capturedReferralCode = cookieReferralCode
     }
-    const cookieReferralUrl = getCookie('refer_url')
-    if (cookieReferUrl) {
+    const cookieReferralUrl = getCookieOrEmpty('refer_url')
+    if (!empty(cookieReferralUrl)) {
         elems.capturedReferralUrl = cookieReferralUrl
     }
     // ------------------------------------------------------------------------
@@ -409,7 +409,7 @@ function addThirdLoginStep() {
 
         verificationBtn.addClass('loading')
 
-        verifyCode(elems.phoneNumberField.getPhoneNumber(), code, elems.capturedReferralCode)
+        verifyCode(elems.phoneNumberField.getPhoneNumber(), code, elems.capturedReferralCode, elems.capturedReferralUrl)
             .done((data) => {
                 utils.notices.removeAllNotices()
                 utils.notices.addSuccessNotice(data.message)
@@ -442,16 +442,22 @@ function addThirdLoginStep() {
     }
 }
 
-function getCookie(name) {
+/**
+ * 获取 cookie key 名称对应的
+ * @param {*} name
+ * @returns
+ */
+function getCookieOrEmpty(name) {
     const nameEQ = name + '='
     const ca = document.cookie.split(';')
     for (let i = 0; i < ca.length; i++) {
         let c = ca[i].trim()
         if (c.indexOf(nameEQ) === 0) {
-            return decodeURIComponent(c.substring(nameEQ.length, c.length))
+            let cookieValue = decodeURIComponent(c.substring(nameEQ.length, c.length))
+            return cookieValue || ''
         }
     }
-    return null
+    return ''
 }
 
 /**
@@ -561,9 +567,10 @@ function requestCode(phoneNumber) {
  * @param {*} phoneNumber 手机号
  * @param {*} code 验证码
  * @param {*} referralCode 推荐码
+ * @param {*} referralUrl 推荐 url
  * @returns
  */
-function verifyCode(phoneNumber, code, referralCode) {
+function verifyCode(phoneNumber, code, referralCode, referralUrl) {
     const endPoint = data.endPoints.login_with_otp
     return jQuery.ajax({
         method: endPoint.method,

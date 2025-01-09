@@ -123,20 +123,26 @@ function addSecondLoginStep() {
         },
     })
 
-    const cookieReferralCode = getCookieOrEmpty('refer_code')
-    if (!empty(cookieReferralCode)) {
-        referralCodeField.val(cookieReferralCode)
-        elems.capturedReferralCode = cookieReferralCode
-    }
-    const cookieReferralUrl = getCookieOrEmpty('refer_url')
-    if (!empty(cookieReferralUrl)) {
-        elems.capturedReferralUrl = cookieReferralUrl
-    }
+    resetCapturedReferralCode()
     // ------------------------------------------------------------------------
     // 统一的锁定/解锁字段函数
     // ------------------------------------------------------------------------
     function resetCapturedReferralCode() {
-        elems.capturedReferralCode = ''
+        const cookieReferralCode = getCookieOrEmpty('refer_code')
+        if (empty(cookieReferralCode)) {
+            referralCodeField.val('')
+            elems.capturedReferralCode = ''
+        } else {
+            referralCodeField.val(cookieReferralCode)
+            elems.capturedReferralCode = cookieReferralCode
+        }
+
+        const cookieReferralUrl = getCookieOrEmpty('refer_url')
+        if (empty(cookieReferralUrl)) {
+            elems.capturedReferralUrl = ''
+        } else {
+            elems.capturedReferralUrl = cookieReferralUrl
+        }
     }
 
     function lockField($field, locked = true) {

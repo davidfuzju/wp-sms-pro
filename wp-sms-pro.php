@@ -4,7 +4,7 @@
  * Plugin Name: WP SMS Pro Pack
  * Plugin URI: https://wp-sms-pro.com/
  * Description: The professional pack adds many features, supports the most popular SMS gateways, and also integrates with other plugins.
- * Version: 4.3.6.24
+ * Version: 4.3.6.25
  * Author: VeronaLabs
  * Author URI: https://veronalabs.com/
  * Text Domain: wp-sms-pro
@@ -18,7 +18,7 @@ if (\file_exists(\dirname(__FILE__) . '/vendor/autoload.php')) {
     require \dirname(__FILE__) . '/vendor/autoload.php';
 }
 // Set the plugin version
-\define('WP_SMS_PRO_VERSION', '4.3.6.24');
+\define('WP_SMS_PRO_VERSION', '4.3.6.25');
 /*
  * Load Legacy functionalities
  */

@@ -123,26 +123,22 @@ function addSecondLoginStep() {
         },
     })
 
-    resetCapturedReferralCode()
+    resetReferralCode()
     // ------------------------------------------------------------------------
     // 统一的锁定/解锁字段函数
     // ------------------------------------------------------------------------
-    function resetCapturedReferralCode() {
+    function resetReferralCode() {
         const cookieReferralCode = getCookieOrEmpty('refer_code')
         if (empty(cookieReferralCode)) {
             referralCodeField.val('')
-            elems.capturedReferralCode = ''
         } else {
             referralCodeField.val(cookieReferralCode)
-            elems.capturedReferralCode = cookieReferralCode
         }
+    }
 
-        const cookieReferralUrl = getCookieOrEmpty('refer_url')
-        if (empty(cookieReferralUrl)) {
-            elems.capturedReferralUrl = ''
-        } else {
-            elems.capturedReferralUrl = cookieReferralUrl
-        }
+    function resetCapturedReferralCode() {
+        elems.capturedReferralCode = ''
+        elems.capturedReferralUrl = ''
     }
 
     function lockField($field, locked = true) {
@@ -201,6 +197,7 @@ function addSecondLoginStep() {
         if (!__verifyPhoneNumber()) {
             // 只要输入框内值发生错误，就重置 referral code 暂存
             resetCapturedReferralCode()
+            resetReferralCode()
             // 校验失败 => 隐藏 referralCodeBox, 按钮禁用
             hideReferralCodeBox()
             setRequestBtnEnabled(false)
@@ -275,6 +272,7 @@ function addSecondLoginStep() {
                     if (res.data.result) {
                         // 验证推荐码通过
                         elems.capturedReferralCode = referralCodeField.getReferralCode()
+                        elems.capturedReferralUrl = getCookieOrEmpty('refer_url')
 
                         utils.notices.removeAllNotices()
                         utils.notices.addSuccessNotice(res.data?.message || 'Referral code valid')

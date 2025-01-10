@@ -154,15 +154,23 @@ function addSecondLoginStep() {
         }
     }
 
-    function showReferralCodeBox() {
+    function showReferralCodeBox(callback) {
         if (!referralCodeBox.is(':visible')) {
-            referralCodeBox.slideDown(200)
+            referralCodeBox.slideDown(200, () => {
+                if (typeof callback === 'function') {
+                    callback()
+                }
+            })
         }
     }
 
-    function hideReferralCodeBox() {
+    function hideReferralCodeBox(callback) {
         if (!referralCodeBox.is(':hidden')) {
-            referralCodeBox.slideUp(200)
+            referralCodeBox.slideUp(200, () => {
+                if (typeof callback === 'function') {
+                    callback()
+                }
+            })
         }
     }
 
@@ -194,11 +202,10 @@ function addSecondLoginStep() {
     phoneNumberField.on('input', function () {
         // 1) 本地校验
         if (!__verifyPhoneNumber()) {
-            // 只要输入框内值发生错误，就重置 referral code 暂存
+            hideReferralCodeBox(() => {
+                resetReferralCode()
+            })
             resetCapturedReferralCode()
-            resetReferralCode()
-            // 校验失败 => 隐藏 referralCodeBox, 按钮禁用
-            hideReferralCodeBox()
             setRequestBtnEnabled(false)
             return
         }

@@ -163,7 +163,6 @@ function addSecondLoginStep() {
     function hideReferralCodeBox() {
         if (!referralCodeBox.is(':hidden')) {
             referralCodeBox.slideUp(200)
-            referralCodeField.val('')
         }
     }
 

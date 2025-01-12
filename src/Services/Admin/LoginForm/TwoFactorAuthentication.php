@@ -15,6 +15,7 @@ use WP_SMS\Pro\Utils\Recaptcha\Recaptcha;
 use WP_REST_Request;
 use WP_Error;
 use WP_User;
+
 class TwoFactorAuthentication
 {
     private $endPoints = [];
@@ -111,6 +112,19 @@ class TwoFactorAuthentication
             $userPass = $request->get_param('user_pass');
             $user = wp_authenticate_username_password(null, $userLogin, $userPass);
             if (is_wp_error($user)) {
+                /// MARK: 修改 invalid_username 的文案
+                $error_code = $user->get_error_code();
+                if ('invalid_username' === $error_code) {
+                    $user->remove('invalid_username');
+                    $user->add(
+                        'invalid_username',
+                        sprintf(
+                            /* translators: %s: User name. */
+                            __('<strong>Error:</strong> The username <strong>%s</strong> is not registered on this site. If you are unsure of your username, try your mobile with SMS instead.'),
+                            $userLogin
+                        )
+                    );
+                }
                 throw new SendRestResponse($user->get_error_messages(), 400);
             }
             $phoneNumber = MainPluginHelper::getUserMobileNumberByUserId($user->ID);

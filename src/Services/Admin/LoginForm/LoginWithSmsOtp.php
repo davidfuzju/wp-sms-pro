@@ -215,17 +215,13 @@ class LoginWithSmsOtp
             }
             $user = Helper::getUserByPhoneNumber($inputPhoneNumber);
             if (empty($user)) {
-                error_log('acton1');
                 /// 对于没有用户，需要注册的情况
                 if (!empty($referralCode) && class_exists('WP_Referral_Code')) {
-                    error_log('acton2');
-                    WP_Referral_Code->get_instance()->setReferralCookies($referralCode, $referralUrl);
+                    WP_Referral_Code::get_instance()->setReferralCookies($referralCode, $referralUrl);
                 }
 
                 $userId = null;
-                error_log('acton3');
                 if (!empty($inputCode) && WPSmsOptionsManager::getOption('register_sms', \true)) {
-                    error_log('acton4');
                     $registerUser = new RegisterUserViaPhone($inputPhoneNumber);
                     $userId = $registerUser->register();
                     if (is_wp_error($userId)) {
@@ -233,9 +229,7 @@ class LoginWithSmsOtp
                     }
                     $user = Helper::getUserByPhoneNumber($inputPhoneNumber);
                 }
-                error_log('acton5');
                 if (\is_null($userId)) {
-                    error_log('acton6');
                     throw new SendRestResponse(['message' => __('No user is registered with the given phone number.', 'wp-sms-pro')], 400);
                 }
             } else {

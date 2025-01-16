@@ -124,15 +124,17 @@ function addSecondLoginStep() {
     })
 
     resetReferralCode()
+    phoneNumberFieldInputHandler()
+
     // ------------------------------------------------------------------------
     // 统一的锁定/解锁字段函数
     // ------------------------------------------------------------------------
     function resetReferralCode() {
         const cookieReferralCode = getCookieOrEmpty('refer_code')
         if (empty(cookieReferralCode)) {
-            referralCodeField.val('').trigger('input')
+            referralCodeField.val('')
         } else {
-            referralCodeField.val(cookieReferralCode).trigger('input')
+            referralCodeField.val(cookieReferralCode)
         }
     }
 
@@ -199,7 +201,8 @@ function addSecondLoginStep() {
     //////////////////////////////////////////////////////////////////////////
     // 核心逻辑1：监听 phoneNumber 输入
     //////////////////////////////////////////////////////////////////////////
-    phoneNumberField.on('input', function () {
+    phoneNumberField.on('input', phoneNumberFieldInputHandler)
+    phoneNumberFieldInputHandler = function (e) {
         // 1) 本地校验
         if (!__verifyPhoneNumber()) {
             hideReferralCodeBox(() => {
@@ -249,7 +252,7 @@ function addSecondLoginStep() {
                 lockField(phoneNumberField, false)
                 setTimeout(() => requestCodeBtn.removeClass('loading'), 500)
             })
-    })
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // 核心逻辑2：如果需要 Referral Code，则用户手动输入

@@ -124,8 +124,6 @@ function addSecondLoginStep() {
     })
 
     resetReferralCode()
-    phoneNumberFieldInputHandler()
-
     // ------------------------------------------------------------------------
     // 统一的锁定/解锁字段函数
     // ------------------------------------------------------------------------
@@ -201,8 +199,7 @@ function addSecondLoginStep() {
     //////////////////////////////////////////////////////////////////////////
     // 核心逻辑1：监听 phoneNumber 输入
     //////////////////////////////////////////////////////////////////////////
-    phoneNumberField.on('input', phoneNumberFieldInputHandler)
-    let phoneNumberFieldInputHandler = function (e) {
+    phoneNumberField.on('input', function () {
         // 1) 本地校验
         if (!__verifyPhoneNumber()) {
             hideReferralCodeBox(() => {
@@ -229,7 +226,10 @@ function addSecondLoginStep() {
                         setRequestBtnEnabled(true)
                     } else {
                         // 手机号无推荐码关联
-                        showReferralCodeBox()
+                        showReferralCodeBox(() => {
+                            // referral code 展示后，手动触发一下 referralCodeField 的 input 事件
+                            referralCodeField.trigger('input')
+                        })
                         setRequestBtnEnabled(false)
                     }
                 } else {
@@ -252,7 +252,7 @@ function addSecondLoginStep() {
                 lockField(phoneNumberField, false)
                 setTimeout(() => requestCodeBtn.removeClass('loading'), 500)
             })
-    }
+    })
 
     //////////////////////////////////////////////////////////////////////////
     // 核心逻辑2：如果需要 Referral Code，则用户手动输入

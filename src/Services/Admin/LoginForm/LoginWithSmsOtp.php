@@ -16,6 +16,7 @@ use WP_REST_Request;
 use WP_SMS\Components\NumberParser;
 use WP_SMS\User\RegisterUserViaPhone;
 use WP_SMS\User\UserLoginHandler;
+use \WP_Referral_Code;
 
 /**
  * 验证码登录相关逻辑类

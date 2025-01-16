@@ -202,7 +202,7 @@ function addSecondLoginStep() {
     // 核心逻辑1：监听 phoneNumber 输入
     //////////////////////////////////////////////////////////////////////////
     phoneNumberField.on('input', phoneNumberFieldInputHandler)
-    phoneNumberFieldInputHandler = function (e) {
+    let phoneNumberFieldInputHandler = function (e) {
         // 1) 本地校验
         if (!__verifyPhoneNumber()) {
             hideReferralCodeBox(() => {

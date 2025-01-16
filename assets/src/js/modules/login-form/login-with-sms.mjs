@@ -130,9 +130,9 @@ function addSecondLoginStep() {
     function resetReferralCode() {
         const cookieReferralCode = getCookieOrEmpty('refer_code')
         if (empty(cookieReferralCode)) {
-            referralCodeField.val('')
+            referralCodeField.val('').trigger('input')
         } else {
-            referralCodeField.val(cookieReferralCode)
+            referralCodeField.val(cookieReferralCode).trigger('input')
         }
     }
 

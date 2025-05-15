@@ -254,8 +254,9 @@ function addSecondLoginStep() {
             requestCodeBtn.addClass('loading')
             checkReferralCodeByPhone(phoneNumberField.getPhoneNumber())
                 .done((res) => {
-                    // 请求成功
                     if (res.success) {
+                        // 请求成功
+                        utils.notices.removeAllNotices()
                         // 业务请求成功
                         if (res.data.has_referral_code) {
                             // 手机号有推荐码关联

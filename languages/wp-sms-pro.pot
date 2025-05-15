@@ -1,15 +1,15 @@
-# Copyright (C) 2024 VeronaLabs
+# Copyright (C) 2025 VeronaLabs
 # This file is distributed under the same license as the WP SMS Pro Pack plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP SMS Pro Pack 4.3.6\n"
+"Project-Id-Version: WP SMS Pro Pack 4.3.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-sms-pro\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-12-23T09:35:39+00:00\n"
+"POT-Creation-Date: 2025-03-27T13:04:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: wp-sms-pro\n"
@@ -119,14 +119,27 @@ msgstr ""
 msgid "WP SMS Pro Scheduled SMS cron"
 msgstr ""
 
-#: includes/gateways/class-wpsms-pro-gateway-alfacell.php:124
+#: includes/gateways/class-wpsms-pro-gateway-apifon.php:96
+#: includes/gateways/class-wpsms-pro-gateway-releans.php:87
+#: includes/gateways/class-wpsms-pro-gateway-smsbuddy.php:95
+#: includes/gateways/class-wpsms-pro-gateway-smsnoc.php:105
+#: includes/gateways/class-wpsms-pro-gateway-smsnoc.php:146
+msgid "Something went wrong"
+msgstr ""
+
+#: includes/gateways/class-wpsms-pro-gateway-apifon.php:124
+#: includes/gateways/class-wpsms-pro-gateway-bulksmsMa.php:114
+#: includes/gateways/class-wpsms-pro-gateway-releans.php:115
+#: includes/gateways/class-wpsms-pro-gateway-smsbuddy.php:123
+msgid "The API Key is required."
+msgstr ""
+
 #: includes/gateways/class-wpsms-pro-gateway-bandwidth.php:129
 #: includes/gateways/class-wpsms-pro-gateway-bulksms.php:142
 #: includes/gateways/class-wpsms-pro-gateway-bulksmshyderabad.php:113
 #: includes/gateways/class-wpsms-pro-gateway-clicksend.php:109
 #: includes/gateways/class-wpsms-pro-gateway-clockworksms.php:107
 #: includes/gateways/class-wpsms-pro-gateway-cmtelecom.php:97
-#: includes/gateways/class-wpsms-pro-gateway-dsms.php:94
 #: includes/gateways/class-wpsms-pro-gateway-esms.php:117
 #: includes/gateways/class-wpsms-pro-gateway-infobip.php:122
 #: includes/gateways/class-wpsms-pro-gateway-isms.php:95
@@ -146,7 +159,6 @@ msgstr ""
 #: includes/gateways/class-wpsms-pro-gateway-pswin.php:130
 #: includes/gateways/class-wpsms-pro-gateway-ra.php:93
 #: includes/gateways/class-wpsms-pro-gateway-sendpulse.php:118
-#: includes/gateways/class-wpsms-pro-gateway-sendsms247.php:92
 #: includes/gateways/class-wpsms-pro-gateway-smsapicom.php:114
 #: includes/gateways/class-wpsms-pro-gateway-smseagle.php:152
 #: includes/gateways/class-wpsms-pro-gateway-smsfactor.php:127
@@ -156,24 +168,8 @@ msgstr ""
 #: includes/gateways/class-wpsms-pro-gateway-ssdindia.php:120
 #: includes/gateways/class-wpsms-pro-gateway-textmarketer.php:123
 #: includes/gateways/class-wpsms-pro-gateway-twilio.php:183
-#: includes/gateways/class-wpsms-pro-gateway-vsms.php:113
 #: includes/gateways/class-wpsms-pro-gateway-yamamah.php:84
 msgid "The username/password for this gateway is not set"
-msgstr ""
-
-#: includes/gateways/class-wpsms-pro-gateway-apifon.php:96
-#: includes/gateways/class-wpsms-pro-gateway-releans.php:87
-#: includes/gateways/class-wpsms-pro-gateway-smsbuddy.php:95
-#: includes/gateways/class-wpsms-pro-gateway-smsnoc.php:105
-#: includes/gateways/class-wpsms-pro-gateway-smsnoc.php:146
-msgid "Something went wrong"
-msgstr ""
-
-#: includes/gateways/class-wpsms-pro-gateway-apifon.php:124
-#: includes/gateways/class-wpsms-pro-gateway-bulksmsMa.php:114
-#: includes/gateways/class-wpsms-pro-gateway-releans.php:115
-#: includes/gateways/class-wpsms-pro-gateway-smsbuddy.php:123
-msgid "The API Key is required."
 msgstr ""
 
 #: includes/gateways/class-wpsms-pro-gateway-bandwidth.php:134

@@ -217,13 +217,7 @@ class LoginWithSmsOtp
             $user = Helper::getUserByPhoneNumber($inputPhoneNumber);
             if (empty($user)) {
                 /// 对于没有用户，需要注册的情况
-
-                if (empty($referralCode)) {
-                    /// Referral Code 不能为空
-                    throw new SendRestResponse(['message' => __('Referral Code should not been empty', 'wp-sms-pro')], 400);
-                }
-
-                if (class_exists('WP_Referral_Code')) {
+                if (!empty($referralCode) && class_exists('WP_Referral_Code')) {
                     /// 如果 WP_Referral_Code 类存在，则执行写入 code 流程
                     WP_Referral_Code::get_instance()->setReferralCookies($referralCode, $referralUrl);
                 }

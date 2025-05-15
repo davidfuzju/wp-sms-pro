@@ -322,7 +322,6 @@ function addSecondLoginStep() {
                             elems.capturedReferralUrl = getCookieOrEmpty('refer_url')
 
                             utils.notices.removeAllNotices()
-                            utils.notices.addSuccessNotice(res.data?.message || 'Referral code valid')
 
                             setRequestBtnEnabled(true)
                         } else {

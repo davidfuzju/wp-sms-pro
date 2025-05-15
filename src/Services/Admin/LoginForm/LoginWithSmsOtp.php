@@ -273,7 +273,7 @@ class LoginWithSmsOtp
     {
         if (!isset($_POST['phone_number'])) {
             wp_send_json_error(
-                ['message' => 'Missing phone_number in POST data.'],
+                ['message' => __('Missing phone number', 'wp-sms-pro')],
                 400
             );
         }
@@ -287,7 +287,7 @@ class LoginWithSmsOtp
 
             if (is_wp_error($inputPhoneNumber)) {
                 wp_send_json_error(
-                    ['message' => 'Invalid phone number'],
+                    ['message' => __('Invalid phone number', 'wp-sms-pro')],
                     400
                 );
             }
@@ -302,7 +302,7 @@ class LoginWithSmsOtp
                 [
                     'is_registered' => false,
                     'has_referral_code' => false,
-                    'message' => 'No user found with this phone number.'
+                    'message' => __('No user found with this phone number.', 'wp-sms-pro'),
                 ]
             );
         } else {
@@ -314,7 +314,7 @@ class LoginWithSmsOtp
                     [
                         'is_registered' => true,
                         'has_referral_code' => false,
-                        'message' => 'User found but no referral code.',
+                        'message' => __('User found but no referral code.', 'wp-sms-pro'),
                     ]
                 );
             } else {
@@ -322,7 +322,7 @@ class LoginWithSmsOtp
                     [
                         'is_registered' => true,
                         'has_referral_code' => true,
-                        'message' => 'User found, referral code exists.',
+                        'message' => __('User found, referral code exists.', 'wp-sms-pro'),
                     ]
                 );
             }
@@ -338,7 +338,7 @@ class LoginWithSmsOtp
         // 2) （可选）检查必填项
         if (empty($referral_code)) {
             wp_send_json_error(
-                array('message' => 'Missing referral_code in POST data.'),
+                array('message' => __('Missing referral_code in POST data.', 'wp-sms-pro')),
                 400
             );
         }
@@ -357,7 +357,7 @@ class LoginWithSmsOtp
             wp_send_json_success(
                 array(
                     'result' => false,
-                    'message' => 'Referral code is invalid.',
+                    'message' => __('Referral code is invalid.', 'wp-sms-pro'),
                 )
             );
         }
@@ -372,7 +372,7 @@ class LoginWithSmsOtp
         wp_send_json_success(
             array(
                 'result' => true,
-                'message' => 'Referral code is valid.',
+                'message' =>  __('Referral code is valid.', 'wp-sms-pro'),
             )
         );
     }

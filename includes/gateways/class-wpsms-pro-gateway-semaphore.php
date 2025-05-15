@@ -64,7 +64,7 @@ class semaphore extends Gateway
                 return new WP_Error('account-credit', __('The API Key for this gateway is not set', 'wp-sms-pro'));
             }
             $this->to = Helper::removeNumbersPrefix(['+'], $this->to);
-            $arguments = array('apikey' => $this->key, 'number' => \implode(',', $this->to), 'message' => $this->msg, 'sendername' => $this->from);
+            $arguments = array('apikey' => $this->key, 'number' => \implode(',', $this->to), 'message' => \urlencode($this->msg), 'sendername' => $this->from);
             $response = $this->request('POST', $this->wsdl_link . 'messages', $arguments);
             if (isset($response->error)) {
                 throw new Exception($response->error);

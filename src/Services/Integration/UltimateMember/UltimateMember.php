@@ -38,7 +38,7 @@ class UltimateMember
         }
         $settings_name = "wpsms_settings";
         add_action("update_option_{$settings_name}", array(self::$this_class, 'sync_old_members'), 10, 3);
-        add_action('um_before_update_profile', array(self::$this_class, 'save_custom_field'), 10, 2);
+        add_action('um_after_save_registration_details', array(self::$this_class, 'save_custom_field'), 10, 3);
         add_filter('wp_sms_from_notify_user_register', array(self::$this_class, 'set_value'), 10, 1);
     }
     /**
@@ -82,10 +82,9 @@ class UltimateMember
      *
      * @return mixed
      */
-    public static function save_custom_field($changes, $user_id)
+    public static function save_custom_field($user_id, $changes, $form_data)
     {
         update_user_meta($user_id, self::$mobileField, $changes[self::$umMobileMetaKey]);
-        return $changes;
     }
     /**
      * Set filter value

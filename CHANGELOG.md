@@ -1,4 +1,9 @@
-= v4.3.6 - 2024-12-23 =
+v4.3.7 - 2025-03-31
+- Fix: Resolved issue with custom mobile field meta keys in Ultimate Member integration when using keys other than `mobile_number`.
+- Fix: Resolved issue with URL encoding in message processing for Semaphore Gateway.
+- Fix: Removed inactivated gateways.
+
+v4.3.6 - 2024-12-23
 - Update: Added support for `userSuppliedId` in BulkSMS SMS gateway.
 - Fix: Resolved issue with MSG91 gateway variable support.
 - Fix: Addressed issues with Semaphore SMS gateway functionality.

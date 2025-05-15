@@ -10,6 +10,41 @@ var initiationPromise
 var isNewUser = false
 const referralCodeLengthLimit = 12
 
+/**
+ * 防抖函数
+ * @param {Function} func 要执行的函数
+ * @param {number} wait 等待时间（毫秒）
+ * @returns {Function} 防抖处理后的函数
+ */
+function debounce(func, wait = 300) {
+    let timeout
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout)
+            func(...args)
+        }
+        clearTimeout(timeout)
+        timeout = setTimeout(later, wait)
+    }
+}
+
+/**
+ * 节流函数
+ * @param {Function} func 要执行的函数
+ * @param {number} wait 等待时间（毫秒）
+ * @returns {Function} 节流处理后的函数
+ */
+function throttle(func, wait = 300) {
+    let lastTime = 0
+    return function executedFunction(...args) {
+        const now = Date.now()
+        if (now - lastTime >= wait) {
+            func.apply(this, args)
+            lastTime = now
+        }
+    }
+}
+
 function init(initialData) {
     if (typeof initiationPromise == 'undefined')
         initiationPromise = new Promise((resolve) => {
@@ -199,96 +234,108 @@ function addSecondLoginStep() {
     //////////////////////////////////////////////////////////////////////////
     // 核心逻辑1：监听 phoneNumber 输入
     //////////////////////////////////////////////////////////////////////////
-    phoneNumberField.on('input', function () {
-        // 1) 本地校验
-        if (!__verifyPhoneNumber()) {
-            hideReferralCodeBox(() => {
-                resetReferralCode()
-            })
-            resetCapturedReferralCode()
-            setRequestBtnEnabled(false)
-            return
-        }
+    phoneNumberField.on(
+        'input',
+        debounce(function () {
+            // 1) 本地校验
+            if (!__verifyPhoneNumber()) {
+                hideReferralCodeBox(() => {
+                    resetReferralCode()
+                })
+                resetCapturedReferralCode()
+                setRequestBtnEnabled(false)
+                return
+            }
 
-        // 2) 校验成功 => 锁定 phoneNumber，显示按钮loading，发起 checkReferralCodeByPhone
-        lockField(phoneNumberField, true)
+            // 2) 校验成功 => 锁定 phoneNumber，显示按钮loading，发起 checkReferralCodeByPhone
+            lockField(phoneNumberField, true)
 
-        // 如果号码大致有效，则调用 Ajax
-        requestCodeBtn.addClass('loading')
-        checkReferralCodeByPhone(phoneNumberField.getPhoneNumber())
-            .done((res) => {
-                // 请求成功
-                if (res.success) {
-                    // 业务请求成功
-                    if (res.data.has_referral_code) {
-                        // 手机号有推荐码关联
-                        hideReferralCodeBox()
-                        setRequestBtnEnabled(true)
+            // 如果号码大致有效，则调用 Ajax
+            requestCodeBtn.addClass('loading')
+            checkReferralCodeByPhone(phoneNumberField.getPhoneNumber())
+                .done((res) => {
+                    // 请求成功
+                    if (res.success) {
+                        // 业务请求成功
+                        if (res.data.has_referral_code) {
+                            // 手机号有推荐码关联
+                            hideReferralCodeBox()
+                            setRequestBtnEnabled(true)
+                        } else {
+                            // 手机号无推荐码关联
+                            showReferralCodeBox(() => {
+                                // referral code 展示后，手动触发一下 referralCodeField 的 input 事件
+                                referralCodeField.trigger('input')
+                            })
+                            setRequestBtnEnabled(false)
+                        }
                     } else {
-                        // 手机号无推荐码关联
-                        showReferralCodeBox(() => {
-                            // referral code 展示后，手动触发一下 referralCodeField 的 input 事件
-                            referralCodeField.trigger('input')
-                        })
+                        // 业务请求失败
+                        utils.notices.removeAllNotices()
+                        utils.notices.addErrorNotice(res.data?.message || 'Check referral code failed.')
+                        hideReferralCodeBox()
                         setRequestBtnEnabled(false)
                     }
-                } else {
-                    // 业务请求失败
+                })
+                .fail((jqXhr) => {
+                    // 请求失败
                     utils.notices.removeAllNotices()
-                    utils.notices.addErrorNotice(res.data?.message || 'Check referral code failed.')
+                    utils.notices.addErrorNotice(jqXhr.responseJSON?.message || 'Server error')
                     hideReferralCodeBox()
                     setRequestBtnEnabled(false)
-                }
-            })
-            .fail((jqXhr) => {
-                // 请求失败
-                utils.notices.removeAllNotices()
-                utils.notices.addErrorNotice(jqXhr.responseJSON?.message || 'Server error')
-                hideReferralCodeBox()
-                setRequestBtnEnabled(false)
-            })
-            .always(() => {
-                // 不管成功/失败 => 解锁 phoneNumber，取消按钮loading
-                lockField(phoneNumberField, false)
-                setTimeout(() => requestCodeBtn.removeClass('loading'), 500)
-            })
-    })
+                })
+                .always(() => {
+                    // 不管成功/失败 => 解锁 phoneNumber，取消按钮loading
+                    lockField(phoneNumberField, false)
+                    setTimeout(() => requestCodeBtn.removeClass('loading'), 500)
+                })
+        })
+    )
 
     //////////////////////////////////////////////////////////////////////////
     // 核心逻辑2：如果需要 Referral Code，则用户手动输入
     //////////////////////////////////////////////////////////////////////////
-    // 当用户填写完 referral code 并按下“提交”/“回车”等操作时，我们去校验
-    // 这里提供一个示例：用户敲回车即可校验，或你可以再加个小按钮
     referralCodeField.on('keydown', (e) => {
         e.key == 'Enter' && requestCodeBtn.trigger('click')
     })
 
-    referralCodeField.on('input', function () {
-        if (!__verifyReferralCode()) {
-            setRequestBtnEnabled(false)
-            return
-        }
+    referralCodeField.on(
+        'input',
+        debounce(function () {
+            if (!__verifyReferralCode()) {
+                setRequestBtnEnabled(false)
+                return
+            }
 
-        lockField(phoneNumberField, true)
-        lockField(referralCodeField, true)
-        requestCodeBtn.addClass('loading')
+            lockField(phoneNumberField, true)
+            lockField(referralCodeField, true)
+            requestCodeBtn.addClass('loading')
 
-        validateReferralCode(phoneNumberField.getPhoneNumber(), referralCodeField.getReferralCode())
-            .done((res) => {
-                /// 请求成功
-                if (res.success) {
-                    /// 业务请求成功
-                    if (res.data.result) {
-                        // 验证推荐码通过
-                        elems.capturedReferralCode = referralCodeField.getReferralCode()
-                        elems.capturedReferralUrl = getCookieOrEmpty('refer_url')
+            validateReferralCode(phoneNumberField.getPhoneNumber(), referralCodeField.getReferralCode())
+                .done((res) => {
+                    /// 请求成功
+                    if (res.success) {
+                        /// 业务请求成功
+                        if (res.data.result) {
+                            // 验证推荐码通过
+                            elems.capturedReferralCode = referralCodeField.getReferralCode()
+                            elems.capturedReferralUrl = getCookieOrEmpty('refer_url')
 
-                        utils.notices.removeAllNotices()
-                        utils.notices.addSuccessNotice(res.data?.message || 'Referral code valid')
+                            utils.notices.removeAllNotices()
+                            utils.notices.addSuccessNotice(res.data?.message || 'Referral code valid')
 
-                        setRequestBtnEnabled(true)
+                            setRequestBtnEnabled(true)
+                        } else {
+                            // 验证推荐码未通过
+                            resetCapturedReferralCode()
+
+                            utils.notices.removeAllNotices()
+                            utils.notices.addErrorNotice(res.data?.message || 'Invalid referral code')
+
+                            setRequestBtnEnabled(false)
+                        }
                     } else {
-                        // 验证推荐码未通过
+                        // 业务请求失败
                         resetCapturedReferralCode()
 
                         utils.notices.removeAllNotices()
@@ -296,68 +343,63 @@ function addSecondLoginStep() {
 
                         setRequestBtnEnabled(false)
                     }
-                } else {
-                    // 业务请求失败
+                })
+                .fail((jqXhr) => {
+                    /// 请求失败
                     resetCapturedReferralCode()
 
                     utils.notices.removeAllNotices()
-                    utils.notices.addErrorNotice(res.data?.message || 'Invalid referral code')
+                    utils.notices.addErrorNotice(jqXhr.responseJSON?.message || 'Server error')
 
                     setRequestBtnEnabled(false)
-                }
-            })
-            .fail((jqXhr) => {
-                /// 请求失败
-                resetCapturedReferralCode()
-
-                utils.notices.removeAllNotices()
-                utils.notices.addErrorNotice(jqXhr.responseJSON?.message || 'Server error')
-
-                setRequestBtnEnabled(false)
-            })
-            .always(() => {
-                setTimeout(() => {
-                    requestCodeBtn.removeClass('loading')
-                    lockField(referralCodeField, false)
-                    lockField(phoneNumberField, false)
-                }, 500)
-            })
-    })
+                })
+                .always(() => {
+                    setTimeout(() => {
+                        requestCodeBtn.removeClass('loading')
+                        lockField(referralCodeField, false)
+                        lockField(phoneNumberField, false)
+                    }, 500)
+                })
+        })
+    )
 
     //////////////////////////////////////////////////////////////////////////
-    // 核心逻辑3：点击 “requestCodeBtn”
+    // 核心逻辑3：点击 "requestCodeBtn"
     //////////////////////////////////////////////////////////////////////////
-    requestCodeBtn.on('click', (e) => {
-        if (requestCodeBtn.hasClass('loading') || requestCodeBtn.prop('disabled')) return
+    requestCodeBtn.on(
+        'click',
+        throttle((e) => {
+            if (requestCodeBtn.hasClass('loading') || requestCodeBtn.prop('disabled')) return
 
-        if (!verifyPhoneNumber()) return
+            if (!verifyPhoneNumber()) return
 
-        lockField(phoneNumberField, true)
-        lockField(referralCodeField, true)
-        requestCodeBtn.addClass('loading')
+            lockField(phoneNumberField, true)
+            lockField(referralCodeField, true)
+            requestCodeBtn.addClass('loading')
 
-        requestCode(phoneNumberField.getPhoneNumber())
-            .done((data) => {
-                utils.notices.removeAllNotices()
-                utils.notices.addSuccessNotice(data.message)
-                utils.steps.slideToStep(2)
+            requestCode(phoneNumberField.getPhoneNumber())
+                .done((data) => {
+                    utils.notices.removeAllNotices()
+                    utils.notices.addSuccessNotice(data.message)
+                    utils.steps.slideToStep(2)
 
-                isNewUser = data.is_new !== undefined && data.is_new
-            })
-            .fail((jqXhr) => {
-                utils.notices.removeAllNotices()
-                utils.notices.addErrorNotice(jqXhr.responseJSON.message)
-                utils.notices.shakeElement(elems.stepsContainer)
-            })
-            .always(() => {
-                if (typeof grecaptcha != 'undefined') grecaptcha.reset()
-                setTimeout(() => {
-                    requestCodeBtn.removeClass('loading')
-                    lockField(referralCodeField, false)
-                    lockField(phoneNumberField, false)
-                }, 500)
-            })
-    })
+                    isNewUser = data.is_new !== undefined && data.is_new
+                })
+                .fail((jqXhr) => {
+                    utils.notices.removeAllNotices()
+                    utils.notices.addErrorNotice(jqXhr.responseJSON.message)
+                    utils.notices.shakeElement(elems.stepsContainer)
+                })
+                .always(() => {
+                    if (typeof grecaptcha != 'undefined') grecaptcha.reset()
+                    setTimeout(() => {
+                        requestCodeBtn.removeClass('loading')
+                        lockField(referralCodeField, false)
+                        lockField(phoneNumberField, false)
+                    }, 500)
+                })
+        }, 1000)
+    ) // 设置1秒的节流时间，防止用户快速点击
 
     elems = {
         ...elems,
@@ -412,33 +454,41 @@ function addThirdLoginStep() {
         setTimeout(() => verificationBtn.removeClass('loading'), 500)
     })
 
-    verificationBtn.on('click', (e) => {
-        const code = elems.otpContainer.getCode()
-        if (code == false) return
+    verificationBtn.on(
+        'click',
+        throttle((e) => {
+            const code = elems.otpContainer.getCode()
+            if (code == false) return
 
-        if (verificationBtn.hasClass('loading')) return
+            if (verificationBtn.hasClass('loading')) return
 
-        if (!verifyPhoneNumber()) return
+            if (!verifyPhoneNumber()) return
 
-        verificationBtn.addClass('loading')
+            verificationBtn.addClass('loading')
 
-        verifyCode(elems.phoneNumberField.getPhoneNumber(), code, elems.capturedReferralCode, elems.capturedReferralUrl)
-            .done((data) => {
-                utils.notices.removeAllNotices()
-                utils.notices.addSuccessNotice(data.message)
-                setTimeout(() => {
-                    window.location.replace(data.redirect_to)
-                }, 500)
-            })
-            .fail((jqXhr) => {
-                utils.notices.removeAllNotices()
-                utils.notices.addErrorNotice(jqXhr.responseJSON.message)
-                utils.notices.shakeElement(elems.stepsContainer)
-                elems.otpContainer.addErrorClassToInput()
-                elems.otpContainer.focusInput()
-            })
-            .always(setTimeout(() => verificationBtn.removeClass('loading'), 500))
-    })
+            verifyCode(
+                elems.phoneNumberField.getPhoneNumber(),
+                code,
+                elems.capturedReferralCode,
+                elems.capturedReferralUrl
+            )
+                .done((data) => {
+                    utils.notices.removeAllNotices()
+                    utils.notices.addSuccessNotice(data.message)
+                    setTimeout(() => {
+                        window.location.replace(data.redirect_to)
+                    }, 500)
+                })
+                .fail((jqXhr) => {
+                    utils.notices.removeAllNotices()
+                    utils.notices.addErrorNotice(jqXhr.responseJSON.message)
+                    utils.notices.shakeElement(elems.stepsContainer)
+                    elems.otpContainer.addErrorClassToInput()
+                    elems.otpContainer.focusInput()
+                })
+                .always(setTimeout(() => verificationBtn.removeClass('loading'), 500))
+        }, 1000)
+    ) // 设置1秒的节流时间，防止用户快速点击
 
     requestNewCodeBtn.on('click', () => {
         utils.steps.slideToStep(1).then(() => {
